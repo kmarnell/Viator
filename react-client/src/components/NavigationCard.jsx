@@ -59,12 +59,6 @@ import FlatButton from 'material-ui/FlatButton';
               <Divider/>
               <div
                 style={styles.map}>
-                <GoogleMapReact
-                  bootstrapURLKeys={{ key: 'AIzaSyC2opYTjIyzGVfixZEyKmUtsT9igDbiAK4' }}
-                  defaultCenter={styles.center}
-                  defaultZoom={11}
-                >
-                </GoogleMapReact>
               </div>
               <CardActions style={styles.actions}>
                 <FlatButton primary = {true} label="NAVIGATE" />

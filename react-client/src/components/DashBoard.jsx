@@ -92,6 +92,7 @@ class DashBoard extends React.Component {
       year: year
     })
     .done((data) => {
+      console.log('flight data', data);
       var dateTime = data.flightStatuses[0].departureDate.dateLocal;
       var newTime;
       var dateOnly;
