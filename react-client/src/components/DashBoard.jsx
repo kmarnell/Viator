@@ -9,12 +9,14 @@ import SightsCard from './SightsCard.jsx';
 import WeatherCard from './WeatherCard.jsx';
 import NavigationCard from './NavigationCard.jsx';
 import EventListCard from './EventListCard.jsx';
+import Itinerary from './Itinerary.jsx';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import GridList from 'material-ui/GridList';
 import GoogleButton from 'react-google-button';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Drawer from 'material-ui/Drawer';
 import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Event from 'material-ui/svg-icons/action/event';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
@@ -57,6 +59,7 @@ class DashBoard extends React.Component {
     this.searchWeather = this.searchWeather.bind(this);
     this.searchEvents = this.searchEvents.bind(this);
     this.toggleItinerary = this.toggleItinerary.bind(this);
+    this.exitToApp = this.exitToApp.bind(this);
   }
 
   searchEvents(location) {
@@ -201,9 +204,14 @@ class DashBoard extends React.Component {
   }
 
   toggleItinerary() {
-    console.log('clicked');
     this.setState({
       drawerOpen: !this.state.drawerOpen
+    });
+  }
+
+  exitToApp() {
+    this.setState({
+      drawerOpen: false
     });
   }
 
@@ -239,11 +247,21 @@ class DashBoard extends React.Component {
         zIndex: 200,
         position: 'fixed',
       },
-      hist:{
+      hist: {
         top: 50,
         left: 30,
         zIndex: 100,
         position: 'fixed',
+      },
+      exitToApp: {
+        position: 'relative',
+        bottom: 3
+      },
+      appBarTitle: {
+        fontSize: 20,
+        height: 56,
+        position: 'relative',
+        bottom: 3
       }
     }
     return(
@@ -284,10 +302,12 @@ class DashBoard extends React.Component {
             >
               <AppBar
                 title="Trip Itinerary"
-                titleStyle={{fontSize: 20}}
-                iconElementLeft={<ExitToApp style={{fill: white}} />}
+                titleStyle={styles.appBarTitle}
+                iconElementLeft={<IconButton style={styles.exitToApp}><ExitToApp style={{fill: white}} /></IconButton>}
+                onLeftIconButtonTouchTap={this.exitToApp}
                 style={{height: 56}}
               />
+
             </Drawer>
           </MuiThemeProvider>
           <MuiThemeProvider>
