@@ -8,7 +8,7 @@ import FoodCard from './FoodCard.jsx';
 import SightsCard from './SightsCard.jsx';
 import WeatherCard from './WeatherCard.jsx';
 import NavigationCard from './NavigationCard.jsx';
-import FlightTimeCard from './FlightTimeCard.jsx';
+import EventListCard from './EventListCard.jsx';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import GridList from 'material-ui/GridList';
 import GoogleButton from 'react-google-button';
@@ -35,11 +35,13 @@ class DashBoard extends React.Component {
     this.state = {
       food: [],
       sights: [],
+      events: [],
       flight: {},
       flightsArray: [],
       index: 0,
       weather: [],
       location: '',
+
     }
     this.searchGoogle = this.searchGoogle.bind(this);
     this.flightSearch = this.flightSearch.bind(this);
@@ -47,6 +49,18 @@ class DashBoard extends React.Component {
     this.historyChange = this.historyChange.bind(this);
     this.searchFood = this.searchFood.bind(this);
     this.searchWeather = this.searchWeather.bind(this);
+    this.searchEvents = this.searchEvents.bind(this);
+  }
+
+  searchEvents(location) {
+    $.get('/events', {
+      location: location
+    })
+    .done((data) => {
+      this.setState({
+        events: data
+      })
+    })
   }
 
   searchGoogle(location) {
@@ -76,6 +90,7 @@ class DashBoard extends React.Component {
       context.searchGoogle(data[0].destination);
       context.searchFood(data[0].destination);
       context.searchWeather(data[0].destination);
+      context.searchEvents(data[0].destination);
       console.log('success GET', data);
       })
     .fail(function(err) {
@@ -150,6 +165,7 @@ class DashBoard extends React.Component {
       this.searchGoogle(flight.destination);
       this.searchFood(flight.destination);
       this.searchWeather(flight.destination);
+      this.searchEvents(flight.destination);
     });
   }
 
@@ -232,7 +248,7 @@ class DashBoard extends React.Component {
               <MuiThemeProvider><FoodCard food={this.state.food}/></MuiThemeProvider>
               <MuiThemeProvider><SightsCard sights={this.state.sights}/></MuiThemeProvider>
               <MuiThemeProvider><NavigationCard/></MuiThemeProvider>
-              <MuiThemeProvider><FlightTimeCard duration={this.state.flightsArray}/></MuiThemeProvider>
+              <MuiThemeProvider><EventListCard events={this.state.events}/></MuiThemeProvider>
             </GridList>
           </MuiThemeProvider>
           <MuiThemeProvider>
