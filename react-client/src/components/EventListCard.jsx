@@ -16,7 +16,7 @@ import {
 } from 'material-ui/styles/colors';
 
 
-class FlightTime extends React.Component {
+class EventListCard extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
@@ -27,53 +27,19 @@ class FlightTime extends React.Component {
     }
   }
 
-  getInitialState(){
-    this.setState({
-      config: {
-        /* HighchartsConfig */
-        chart: {
-          type: 'bar',
-          height: 300,
-          width:400,
-          fontFamily: "'Roboto', sans-serif",
-        },
-        shadow: {
-          color: 'yellow',
-          width: 10,
-          offsetX: 0,
-          offsetY: 0
-        },
-        yAxis: {
-          title: {
-            text: 'Miles'
-          }
-        },
-        title: {
-          style: {
-            display: 'none'
-          }
-        },
-        xAxis: {
-          categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
-        },
-        series: [{
-          name: 'Miles',
-          showInLegend: false,
-          data: [300.9, 500.5, 106.4, 129.2, 144.0, 176.0]
-        }]
-      }
-    })
-  }
-
-  componentDidMount(){
-    this.getInitialState();
-  }
-
   render() {
+    if (this.props.events) {
+      var events = Object.entries(this.props.events)
+    }
     const styles = {
       card: {
         width: '100%',
         height: 400,
+      },
+      gridList: {
+        width: '100%',
+        height: '80%',
+        overflowY: 'auto',
       },
       avatar: {
         backgroundColor: green500,
@@ -90,19 +56,39 @@ class FlightTime extends React.Component {
         <Card
           style={styles.card}>
           <CardHeader
-            title="Flight Mileage"
+            title="Nearby Events"
+            subtitle="Eventbrite activities nearby"
             avatar={<Avatar icon={<MapNavigation />}
               style={styles.avatar}
               color={white}/>}
             style={styles.cardHeader}
           />
           <Divider/>
-          <ul style={styles.chart}> {<ReactHighcharts config={this.state.config} ref="chart"/>}
-          </ul>
+          <GridList
+            cellHeight={100}
+            style={styles.gridList}
+          >
+            {events.map((event) => (
+              <GridTile
+                key={event[1].img}
+                title={event[1].description}
+                cols = {2}
+                rows = {2}
+                actionIcon={<IconButton><StarBorder color="white" /></IconButton>}
+
+              >
+                <a target="_blank" href={event[1].url}>
+                <img src = {event[1].img} />
+                </a>
+              </GridTile>
+            ))}
+          </GridList>
+
         </Card>
       </div>
     )
   }
 }
 
-export default FlightTime;
+
+export default EventListCard;
