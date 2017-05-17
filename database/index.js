@@ -15,7 +15,7 @@ db.once('open', () => {
 
 
 const userSchema = mongoose.Schema({
-
+  
     user: String,
     month: String,
     day: String,
