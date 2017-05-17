@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const findOrCreate = require('mongoose-find-or-create');
-mongoose.connect('mongodb://localhost/greenfield');
-// mongoose.connect('mongodb://group:Hackreactor21@ds127101.mlab.com:27101/greenfield');
+// mongoose.connect('mongodb://localhost/legacy');
+mongoose.connect('mongodb://infamousfrogs:Hackreactor21@ds143191.mlab.com:43191/viator-legacy');
 mongoose.Promise = require('bluebird');
 const db = mongoose.connection;
 
