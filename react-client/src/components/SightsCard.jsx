@@ -8,6 +8,7 @@ import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import Star from 'material-ui/svg-icons/toggle/star';
 import MapsPlace from 'material-ui/svg-icons/maps/place';
 import Avatar from 'material-ui/Avatar';
+import DatePicker from 'material-ui/DatePicker';
 import {
   grey500, blueGrey500
 } from 'material-ui/styles/colors';
@@ -29,7 +30,7 @@ const styles = {
   avatar: {
     backgroundColor: blueGrey500,
   }
-}
+};
 
 const SightsCard = (props) => (
   <div>
@@ -52,7 +53,14 @@ const SightsCard = (props) => (
             key={sight.place_id}
             title={sight.name}
             subtitle={<b>{sight.formatted_address}</b>}
-            actionIcon={<IconButton><StarBorder color="white" /></IconButton>}
+            actionIcon={
+              <div>
+                <IconButton onClick={props.addToItinerary}>
+                  <StarBorder color="white" />
+                </IconButton>
+                <DatePicker />
+              </div>
+            }
           >
             <a target="_blank" href={sight.url}>
             <img src={sight.img} />
