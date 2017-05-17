@@ -32,44 +32,58 @@ const styles = {
   }
 };
 
-const SightsCard = (props) => (
-  <div>
-    <Card
-      style={styles.card}
-    >
-      <CardHeader
-        title="Places of Interest"
-        subtitle={props.sights.length + ' attractions nearby'}
-        avatar={<Avatar icon={<MapsPlace />} style={styles.avatar} />}
-        style={styles.cardHeader}
-      />
-      <Divider/>
-      <GridList
-        cellHeight={180}
-        style={styles.gridList}
-      >
-        {props.sights.map((sight) => (
-          <GridTile
-            key={sight.place_id}
-            title={sight.name}
-            subtitle={<b>{sight.formatted_address}</b>}
-            actionIcon={
-              <div>
-                <IconButton onClick={props.addToItinerary}>
-                  <StarBorder color="white" />
-                </IconButton>
-                <DatePicker />
-              </div>
-            }
+class SightsCard extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.addToItinerary = this.addToItinerary.bind(this);
+  }
+
+  addToItinerary() {
+    this.refs.dp.openDialog();
+  }
+
+  render() {
+    return (
+      <div>
+        <Card
+          style={styles.card}
+        >
+          <CardHeader
+            title="Places of Interest"
+            subtitle={this.props.sights.length + ' attractions nearby'}
+            avatar={<Avatar icon={<MapsPlace />} style={styles.avatar} />}
+            style={styles.cardHeader}
+          />
+          <Divider/>
+          <GridList
+            cellHeight={180}
+            style={styles.gridList}
           >
-            <a target="_blank" href={sight.url}>
-            <img src={sight.img} />
-            </a>
-          </GridTile>
-        ))}
-      </GridList>
-    </Card>
-  </div>
-)
+            {this.props.sights.map((sight) => (
+              <GridTile
+                key={sight.place_id}
+                title={sight.name}
+                subtitle={<b>{sight.formatted_address}</b>}
+                actionIcon={
+                  <div>
+                    <IconButton onTouchTap={this.addToItinerary}>
+                      <StarBorder color="white" />
+                    </IconButton>
+                    <DatePicker ref="dp" />
+                  </div>
+                }
+              >
+                <a target="_blank" href={sight.url}>
+                <img src={sight.img} />
+                </a>
+              </GridTile>
+            ))}
+          </GridList>
+        </Card>
+      </div>
+    );
+  }
+}
 
 export default SightsCard;

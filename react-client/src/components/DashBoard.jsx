@@ -26,9 +26,7 @@ import {
   Link,
 } from 'react-router-dom';
 import {
-  amberA700,
-  tealA700,
-  white
+  amberA700, tealA700, white
 } from 'material-ui/styles/colors';
 import $ from 'jquery';
 import SignOutToolBar from './SignOutToolBar.jsx';
@@ -60,7 +58,6 @@ class DashBoard extends React.Component {
     this.searchEvents = this.searchEvents.bind(this);
     this.toggleItinerary = this.toggleItinerary.bind(this);
     this.exitToApp = this.exitToApp.bind(this);
-    this.addToItinerary = this.addToItinerary.bind(this);
   }
 
   searchEvents(location) {
@@ -216,10 +213,6 @@ class DashBoard extends React.Component {
     });
   }
 
-  addToItinerary() {
-    console.log('CLICK!')
-  }
-
   componentDidMount() {
     this.databaseFlightSearch();
   }
@@ -292,7 +285,7 @@ class DashBoard extends React.Component {
               <MuiThemeProvider><WeatherCard weather={this.state.weather} location={this.state.location}/></MuiThemeProvider>
               <MuiThemeProvider><FlightCard flight={this.state.flight}/></MuiThemeProvider>
               <MuiThemeProvider><FoodCard food={this.state.food}/></MuiThemeProvider>
-              <MuiThemeProvider><SightsCard sights={this.state.sights} addToItinerary={this.addToItinerary}/></MuiThemeProvider>
+              <MuiThemeProvider><SightsCard sights={this.state.sights}/></MuiThemeProvider>
               <MuiThemeProvider><NavigationCard/></MuiThemeProvider>
               <MuiThemeProvider><EventListCard events={this.state.events}/></MuiThemeProvider>
             </GridList>
