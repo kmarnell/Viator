@@ -44,12 +44,35 @@ class NewTrip extends React.Component {
     this.handleFlightNumber = this.handleFlightNumber.bind(this);
     this.handleFinalDestination = this.handleFinalDestination.bind(this);
   }
+
+  isFlightInfoDefault () {
+      let flightDefault = {
+        flight: this.state.flightNumber,
+        flightDestination: this.state.flightDestination,
+        date: this.state.date,
+        finalDestination: this.state.finalDestination
+      };
+      for (let key in flightDefault) {
+        if (flightDefault[key] === "") {
+          return key;
+        }
+      }
+        return false;
+    }; // end of isStateDefault 
+
   handleNext () {
     const {stepIndex} = this.state;
+    if (stepIndex ===1 && (this.state.flightNumber === '' || this.state.date === '') ) {
+      alert(`Please update Flight Number and Start Date to proceed`)
+    }
+    else if (stepIndex === 2 && this.isFlightInfoDefault()) {
+        alert(`Please update ${this.isFlightInfoDefault()} information`)
+      } else { 
     this.setState({
       stepIndex: stepIndex + 1,
       finished: stepIndex >= 2,
     });
+    }
   };
 
   handlePrev () {
@@ -71,6 +94,8 @@ class NewTrip extends React.Component {
   handleFinalDestination (event, address) {
     this.setState({finalDestination: address});
   };
+
+  
   getStepContent(stepIndex) {
     const styles = {
       wrapper: {
@@ -210,7 +235,7 @@ saveData() {
       })
       .done(function(data) {
 
-      console.log('POST Successful');
+      console.log('url:/db/save POST Successful');
       })
       .fail(function(err) {
       console.error('POST failed');
