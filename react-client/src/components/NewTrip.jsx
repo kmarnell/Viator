@@ -46,10 +46,39 @@ class NewTrip extends React.Component {
   }
   handleNext () {
     const {stepIndex} = this.state;
+    if (stepIndex === 2 ) {
+      let isFlightInfoDefault = () => {
+        let flightDefault = {
+          flight: this.state.flightNumber,
+          flightDestination: this.state.flightDestination,
+          date: this.state.date,
+          finalDestination: this.state.finalDestination
+        };
+
+      for (let key in flightDefault) {
+        if (flightDefault[key] === "") {
+          return key;
+        }
+      }
+        return false;
+      }; // end of isStateDefault 
+
+      // console.log('isDefault', !!isFlightInfoDefault())
+      if(!!isFlightInfoDefault()) {
+        // default value yet to be filled in
+        alert(`${isFlightInfoDefault()}`)
+      } else { 
+        this.setState({
+        stepIndex: stepIndex + 1,
+        finished: stepIndex >= 2,
+        });
+      }
+    } else { 
     this.setState({
       stepIndex: stepIndex + 1,
       finished: stepIndex >= 2,
     });
+    }
   };
 
   handlePrev () {
@@ -71,6 +100,8 @@ class NewTrip extends React.Component {
   handleFinalDestination (event, address) {
     this.setState({finalDestination: address});
   };
+
+  
   getStepContent(stepIndex) {
     const styles = {
       wrapper: {
