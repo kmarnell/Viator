@@ -13,7 +13,11 @@ import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui
 import GridList from 'material-ui/GridList';
 import GoogleButton from 'react-google-button';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
+import Drawer from 'material-ui/Drawer';
+import AppBar from 'material-ui/AppBar';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import Event from 'material-ui/svg-icons/action/event';
+import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import {
   BrowserRouter as Router,
   Route,
@@ -21,6 +25,8 @@ import {
 } from 'react-router-dom';
 import {
   amberA700,
+  tealA700,
+  white
 } from 'material-ui/styles/colors';
 import $ from 'jquery';
 import SignOutToolBar from './SignOutToolBar.jsx';
@@ -41,7 +47,7 @@ class DashBoard extends React.Component {
       index: 0,
       weather: [],
       location: '',
-
+      drawerOpen: false
     }
     this.searchGoogle = this.searchGoogle.bind(this);
     this.flightSearch = this.flightSearch.bind(this);
@@ -50,6 +56,7 @@ class DashBoard extends React.Component {
     this.searchFood = this.searchFood.bind(this);
     this.searchWeather = this.searchWeather.bind(this);
     this.searchEvents = this.searchEvents.bind(this);
+    this.toggleItinerary = this.toggleItinerary.bind(this);
   }
 
   searchEvents(location) {
@@ -193,6 +200,13 @@ class DashBoard extends React.Component {
     })
   }
 
+  toggleItinerary() {
+    console.log('clicked');
+    this.setState({
+      drawerOpen: !this.state.drawerOpen
+    });
+  }
+
   componentDidMount() {
     this.databaseFlightSearch();
   }
@@ -214,6 +228,15 @@ class DashBoard extends React.Component {
         bottom: 20,
         left: 'auto',
         zIndex: 100,
+        position: 'fixed',
+      },
+      fab2: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 85,
+        left: 'auto',
+        zIndex: 200,
         position: 'fixed',
       },
       hist:{
@@ -252,6 +275,22 @@ class DashBoard extends React.Component {
             </GridList>
           </MuiThemeProvider>
           <MuiThemeProvider>
+            <Drawer
+              width={600}
+              docked={false}
+              openSecondary={true}
+              open={this.state.drawerOpen}
+              onRequestChange={(open) => this.setState({drawerOpen: open})}
+            >
+              <AppBar
+                title="Trip Itinerary"
+                titleStyle={{fontSize: 20}}
+                iconElementLeft={<ExitToApp style={{fill: white}} />}
+                style={{height: 56}}
+              />
+            </Drawer>
+          </MuiThemeProvider>
+          <MuiThemeProvider>
             <Link to='/trip'>
               <FloatingActionButton
                 style={styles.fab}
@@ -259,6 +298,16 @@ class DashBoard extends React.Component {
                 label="Search"><ContentAdd />
               </FloatingActionButton>
             </Link>
+          </MuiThemeProvider>
+          <MuiThemeProvider>
+            <FloatingActionButton
+              style={styles.fab2}
+              backgroundColor={tealA700}
+              label="openItinerary"
+              onClick={this.toggleItinerary}
+            >
+              <Event />
+            </FloatingActionButton>
           </MuiThemeProvider>
         </div>
       </div>
