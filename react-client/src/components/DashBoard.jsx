@@ -246,14 +246,15 @@ class DashBoard extends React.Component {
     });
   }
 
-  submitToItinerary(date, primary, secondary, url) {
+  submitToItinerary(date, primary, secondary, url, type) {
     let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
     if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
       let newItem = {
         primary: primary,
         secondary: secondary,
-        url: url
+        url: url,
+        type: type
       };
       let itineraryItems = this.state.itinerary[itineraryKey];
       itineraryItems.push(newItem);
@@ -272,7 +273,8 @@ class DashBoard extends React.Component {
       newItem[itineraryKey] = [{
         primary: primary,
         secondary: secondary,
-        url: url
+        url: url,
+        type: type
       }];
       let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
 
@@ -367,10 +369,10 @@ class DashBoard extends React.Component {
               padding = {25}>
               <MuiThemeProvider><WeatherCard weather={this.state.weather} location={this.state.location}/></MuiThemeProvider>
               <MuiThemeProvider><FlightCard returnFlight = {this.state.returnFlight} flight={this.state.flight}/></MuiThemeProvider>
-              <MuiThemeProvider><FoodCard food={this.state.food}/></MuiThemeProvider>
-              <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><NavigationCard/></MuiThemeProvider>
-              <MuiThemeProvider><EventListCard events={this.state.events}/></MuiThemeProvider>
+              <MuiThemeProvider><FoodCard food={this.state.food} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
+              <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
+              <MuiThemeProvider><EventListCard events={this.state.events} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
             </GridList>
           </MuiThemeProvider>
           <MuiThemeProvider>

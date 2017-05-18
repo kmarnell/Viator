@@ -91,7 +91,7 @@ class SightsCard extends React.Component {
                   ref="dp"
                   onChange={(nullVal, date) => {
                     let context = this;
-                    this.props.submitToItinerary(date, context.state.primary, context.state.secondary, context.state.url);
+                    this.props.submitToItinerary(date, context.state.primary, context.state.secondary, context.state.url, 'sight');
                   }}
                 />
               </GridTile>
