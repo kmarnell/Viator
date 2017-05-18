@@ -33,7 +33,20 @@ import SignOutToolBar from './SignOutToolBar.jsx';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
-
+const months = {
+  0: 'January',
+  1: 'February',
+  2: 'March',
+  3: 'April',
+  4: 'May',
+  5: 'June',
+  6: 'July',
+  7: 'August',
+  8: 'September',
+  9: 'October',
+  10: 'November',
+  11: 'December'
+};
 
 class DashBoard extends React.Component {
   constructor (props) {
@@ -46,6 +59,7 @@ class DashBoard extends React.Component {
       flightsArray: [],
       index: 0,
       weather: [],
+      itinerary: {},
       location: '',
       drawerOpen: false
     }
@@ -56,6 +70,7 @@ class DashBoard extends React.Component {
     this.searchFood = this.searchFood.bind(this);
     this.searchWeather = this.searchWeather.bind(this);
     this.searchEvents = this.searchEvents.bind(this);
+    this.submitToItinerary = this.submitToItinerary.bind(this);
     this.toggleItinerary = this.toggleItinerary.bind(this);
     this.exitToApp = this.exitToApp.bind(this);
   }
@@ -201,6 +216,23 @@ class DashBoard extends React.Component {
     })
   }
 
+  submitToItinerary(date) {
+    let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    console.log(itineraryKey);
+    if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
+
+    } else {
+      let newItem = {
+        itineraryKey: []
+      };
+      let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
+
+      this.setState({
+        itinerary: newItineraryObj
+      });
+    }
+  }
+
   toggleItinerary() {
     this.setState({
       drawerOpen: !this.state.drawerOpen
@@ -285,7 +317,7 @@ class DashBoard extends React.Component {
               <MuiThemeProvider><WeatherCard weather={this.state.weather} location={this.state.location}/></MuiThemeProvider>
               <MuiThemeProvider><FlightCard flight={this.state.flight}/></MuiThemeProvider>
               <MuiThemeProvider><FoodCard food={this.state.food}/></MuiThemeProvider>
-              <MuiThemeProvider><SightsCard sights={this.state.sights}/></MuiThemeProvider>
+              <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><NavigationCard/></MuiThemeProvider>
               <MuiThemeProvider><EventListCard events={this.state.events}/></MuiThemeProvider>
             </GridList>

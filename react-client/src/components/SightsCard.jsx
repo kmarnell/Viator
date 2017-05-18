@@ -31,6 +31,7 @@ const styles = {
     backgroundColor: blueGrey500,
   }
 };
+  
 
 class SightsCard extends React.Component {
   constructor(props) {
@@ -44,6 +45,7 @@ class SightsCard extends React.Component {
   }
 
   render() {
+
     return (
       <div>
         <Card
@@ -66,17 +68,18 @@ class SightsCard extends React.Component {
                 title={sight.name}
                 subtitle={<b>{sight.formatted_address}</b>}
                 actionIcon={
-                  <div>
                     <IconButton onTouchTap={this.addToItinerary}>
                       <StarBorder color="white" />
                     </IconButton>
-                    <DatePicker ref="dp" />
-                  </div>
                 }
               >
                 <a target="_blank" href={sight.url}>
                 <img src={sight.img} />
                 </a>
+                <DatePicker
+                  ref="dp"
+                  onChange={(nullVal, date) => { this.props.submitToItinerary(date); }}
+                />
               </GridTile>
             ))}
           </GridList>
