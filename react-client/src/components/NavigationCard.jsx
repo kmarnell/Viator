@@ -14,12 +14,44 @@ import {
 } from 'material-ui/styles/colors';
 import GoogleMapReact from 'google-map-react';
 import FlatButton from 'material-ui/FlatButton';
+import $ from 'jquery';
 
 
  class NavigationCard extends React.Component {
   constructor (props) {
     super(props);
+     this.getGeoCoord = this.getGeoCoord.bind(this);
   }
+  
+  getGeoCoord(position) {
+    if (position) {
+      $.ajax({
+        type: 'GET',
+        url: '/geoCoord',
+        contentType: 'application/json',
+        data: {position: position.replace(/[, ]+/g, " ").trim()},
+        dataType: 'text',
+        success: (data) => {
+          console.log(`success getGeoCoord`,  data)
+          return data
+        },
+        fail: (data) => {
+          console.log('dash.getGeoCoord FAIL ', err)
+        }
+      })
+      .done(function(data) {
+        console.log('after ajax geoCoord: ' , typeof data, data, position)
+        return data;
+      })
+    } else { /* position === undefined */
+      console.log('position undefined') 
+  }
+}
+
+  componentDidMount() {
+  }
+
+
 
   render() {
     const styles = {
@@ -50,8 +82,8 @@ import FlatButton from 'material-ui/FlatButton';
         <Card
           style={styles.card}>
           <CardHeader
-              title="Navigation from Airport"
-              subtitle='Address should go here.'
+              title= {this.getGeoCoord(this.props.arrivalPort)}
+              subtitle={this.getGeoCoord(this.props.destination)}
               avatar={<Avatar icon={<MapNavigation />}
                 style={styles.avatar}
                 color={white}/>}
