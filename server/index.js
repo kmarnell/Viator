@@ -246,11 +246,15 @@ app.get('/flightStatus', (req, res) => {
 
 app.post('/database/save', (req, res) => {
   console.log(req.body);
+    if (!req.body.returnDate || !req.body.returnFlightNumber) {
+      var returnDateTotal = undefined;
+      var returnMonthOnly = undefined;
+      var returnDayOnly = undefined;
+      var returnYearOnly = undefined;
+      var returnFlightNumber = undefined;
+    }
 
-    var dateTotal = req.body.date;
-    var monthOnly;
-    var dayOnly;
-    var yearOnly;
+    else {
 
     var returnDateTotal = req.body.returnDate;
     var returnMonthOnly;
@@ -260,6 +264,12 @@ app.post('/database/save', (req, res) => {
     returnYearOnly = returnDateTotal.slice(0,4);
     returnDayOnly = Number(returnDateTotal.slice(5,7)).toString();
     returnMonthOnly = Number(returnDateTotal.slice(8,10)).toString();
+    returnFlightNumber = req.body.returnFlightNumber
+  }
+    var dateTotal = req.body.date;
+    var monthOnly;
+    var dayOnly;
+    var yearOnly;
 
     yearOnly = dateTotal.slice(0,4);
     dayOnly = Number(dateTotal.slice(5,7)).toString();
@@ -275,7 +285,7 @@ app.post('/database/save', (req, res) => {
       Airline: req.body.airline,
       flight: req.body.flightNumber,
       destination: req.body.finalDestination,
-      returnFlight: req.body.returnFlightNumber,
+      returnFlight: returnFlightNumber,
       returnMonth: returnMonthOnly,
       returnDay: returnDayOnly,
       returnMonth: returnMonthOnly

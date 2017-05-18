@@ -62,7 +62,8 @@ class DashBoard extends React.Component {
       weather: [],
       itinerary: {},
       location: '',
-      drawerOpen: false
+      drawerOpen: false,
+      returnFlightStatus: false
     }
     this.searchGoogle = this.searchGoogle.bind(this);
     this.flightSearch = this.flightSearch.bind(this);
@@ -114,7 +115,10 @@ class DashBoard extends React.Component {
 
       })
       context.flightSearch(data[0].Airline,data[0].flight,data[0].month,data[0].day,data[0].year, "flight");
-      context.flightSearch(data[0].Airline,data[0].returnFlight,data[0].returnMonth,data[0].returnDay,data[0].year, "returnFlight")
+      if (data[0].returnFlight) {
+        context.flightSearch(data[0].Airline,data[0].returnFlight,data[0].returnMonth,data[0].returnDay,data[0].year, "returnFlight")
+        context.setState({returnFlightStatus: true})
+      }
       context.searchGoogle(data[0].destination);
       context.searchFood(data[0].destination);
       context.searchWeather(data[0].destination);
@@ -216,9 +220,15 @@ class DashBoard extends React.Component {
       index: index,
     }, function() {
       var flight = this.state.flightsArray[index];
-      this.flightSearch(flight.Airline,flight.flight,flight.month,flight.day,flight.year, "flight");
-      this.flightSearch(flight.Airline,flight.returnFlight,flight.returnMonth,flight.returnDay,flight.year, "returnFlight");
-      this.fightSearch()
+      if (!flight.returnFlight) {
+        this.setState({returnFlightStatus: false})
+        this.flightSearch(flight.Airline,flight.flight,flight.month,flight.day,flight.year, "flight");
+      }
+      else {
+        this.setState({returnFlightStatus: true})
+        this.flightSearch(flight.Airline,flight.flight,flight.month,flight.day,flight.year, "flight");
+        this.flightSearch(flight.Airline,flight.returnFlight,flight.returnMonth,flight.returnDay,flight.year, "returnFlight");
+      }
       this.searchGoogle(flight.destination);
       this.searchFood(flight.destination);
       this.searchWeather(flight.destination);
@@ -373,7 +383,7 @@ class DashBoard extends React.Component {
               cols = {3}
               padding = {25}>
               <MuiThemeProvider><WeatherCard weather={this.state.weather} location={this.state.location}/></MuiThemeProvider>
-              <MuiThemeProvider><FlightCard returnFlight = {this.state.returnFlight} flight={this.state.flight}/></MuiThemeProvider>
+              <MuiThemeProvider><FlightCard returnFlightStatus = {this.state.returnFlightStatus} returnFlight = {this.state.returnFlight} flight={this.state.flight}/></MuiThemeProvider>
               <MuiThemeProvider><NavigationCard  destination={this.state.location} arrivalPort={this.state.flight.arrivalPort} /></MuiThemeProvider>
               <MuiThemeProvider><FoodCard food={this.state.food} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
