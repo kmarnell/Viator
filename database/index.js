@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const findOrCreate = require('mongoose-find-or-create');
-// mongoose.connect('mongodb://localhost/legacy');
-mongoose.connect('mongodb://infamousfrogs:Hackreactor21@ds143191.mlab.com:43191/viator-legacy');
+mongoose.connect('mongodb://localhost/legacy');
+// mongoose.connect('mongodb://infamousfrogs:Hackreactor21@ds143191.mlab.com:43191/viator-legacy');
 mongoose.Promise = require('bluebird');
 const db = mongoose.connection;
 
@@ -15,14 +15,18 @@ db.once('open', () => {
 
 
 const userSchema = mongoose.Schema({
-  
+
     user: String,
     month: String,
     day: String,
     year: String,
     Airline: String,
     flight: String,
-    destination: String
+    destination: String,
+    returnFlight: String,
+    returnMonth: String,
+    returnDay: String,
+    returnMonth: String
 
   });
 
