@@ -5,7 +5,7 @@ import {GridList, GridTile} from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
-import MapNavigation from 'material-ui/svg-icons/action/cached';
+import EventSeat from 'material-ui/svg-icons/action/event-seat';
 import Avatar from 'material-ui/Avatar';
 import Arrow from 'material-ui/svg-icons/navigation/arrow-forward';
 import Divider from 'material-ui/Divider';
@@ -58,7 +58,7 @@ class EventListCard extends React.Component {
           <CardHeader
             title="Nearby Events"
             subtitle="Eventbrite activities nearby"
-            avatar={<Avatar icon={<MapNavigation />}
+            avatar={<Avatar icon={<EventSeat />}
               style={styles.avatar}
               color={white}/>}
             style={styles.cardHeader}
