@@ -23,19 +23,21 @@ const ItineraryItems = (props) => (
   <div>
     <List>
       {props.itineraryItems.map((item, i) =>
-        <a key={i} href={item.url} target="_blank" style={{textDecoration: 'none'}}>
-          <ListItem
-            primaryText={item.primary}
-            secondaryText={item.secondary}
-            leftAvatar={
-              item.type === 'sight' ? 
-              <Avatar icon={<MapsPlace />} style={styles.sight} /> :
-              item.type === 'event' ?
-              <Avatar icon={<EventSeat />} style={styles.event} /> :
-              <Avatar icon={<EventSeat />} style={styles.event} />
-            }
-          />
-        </a>
+        <ListItem
+          key={i}
+          primaryText={item.primary}
+          secondaryText={item.secondary}
+          leftAvatar={
+            item.type === 'sight' ? 
+            <Avatar icon={<MapsPlace />} style={styles.sight} /> :
+            item.type === 'event' ?
+            <Avatar icon={<EventSeat />} style={styles.event} /> :
+            <Avatar icon={<EventSeat />} style={styles.event} />
+          }
+          href={item.url}
+          target="_blank"
+          style={{textDecoration: 'none'}}
+        />
       )}
     </List>
     <Divider style={{width: '70%'}}/>
