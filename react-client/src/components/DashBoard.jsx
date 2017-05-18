@@ -9,25 +9,44 @@ import SightsCard from './SightsCard.jsx';
 import WeatherCard from './WeatherCard.jsx';
 import NavigationCard from './NavigationCard.jsx';
 import EventListCard from './EventListCard.jsx';
+import Itinerary from './Itinerary.jsx';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import GridList from 'material-ui/GridList';
 import GoogleButton from 'react-google-button';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
+import Drawer from 'material-ui/Drawer';
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import Event from 'material-ui/svg-icons/action/event';
+import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import {
   BrowserRouter as Router,
   Route,
   Link,
 } from 'react-router-dom';
 import {
-  amberA700,
+  amberA700, tealA700, white
 } from 'material-ui/styles/colors';
 import $ from 'jquery';
 import SignOutToolBar from './SignOutToolBar.jsx';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
-
+const months = {
+  0: 'aJanuary',
+  1: 'bFebruary',
+  2: 'cMarch',
+  3: 'dApril',
+  4: 'eMay',
+  5: 'fJune',
+  6: 'gJuly',
+  7: 'hAugust',
+  8: 'iSeptember',
+  9: 'jOctober',
+  10: 'kNovember',
+  11: 'lDecember'
+};
 
 class DashBoard extends React.Component {
   constructor (props) {
@@ -40,8 +59,9 @@ class DashBoard extends React.Component {
       flightsArray: [],
       index: 0,
       weather: [],
+      itinerary: {},
       location: '',
-
+      drawerOpen: false
     }
     this.searchGoogle = this.searchGoogle.bind(this);
     this.flightSearch = this.flightSearch.bind(this);
@@ -50,6 +70,9 @@ class DashBoard extends React.Component {
     this.searchFood = this.searchFood.bind(this);
     this.searchWeather = this.searchWeather.bind(this);
     this.searchEvents = this.searchEvents.bind(this);
+    this.submitToItinerary = this.submitToItinerary.bind(this);
+    this.toggleItinerary = this.toggleItinerary.bind(this);
+    this.exitToApp = this.exitToApp.bind(this);
   }
 
   searchEvents(location) {
@@ -189,8 +212,56 @@ class DashBoard extends React.Component {
       this.setState({
         weather: data,
         location: location
-      })
-    })
+      });
+    });
+  }
+
+  submitToItinerary(date, primary, secondary, url) {
+    let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+
+    if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
+      let newItem = {
+        primary: primary,
+        secondary: secondary,
+        url: url
+      };
+      let itineraryItems = this.state.itinerary[itineraryKey];
+      itineraryItems.push(newItem);
+
+      let newDateItem = {};
+      newDateItem[itineraryKey] = itineraryItems;
+
+      let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
+
+      this.setState({
+        itinerary: newItineraryObj
+      });
+
+    } else {
+      let newItem = {};
+      newItem[itineraryKey] = [{
+        primary: primary,
+        secondary: secondary,
+        url: url
+      }];
+      let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
+
+      this.setState({
+        itinerary: newItineraryObj
+      });
+    }
+  }
+
+  toggleItinerary() {
+    this.setState({
+      drawerOpen: !this.state.drawerOpen
+    });
+  }
+
+  exitToApp() {
+    this.setState({
+      drawerOpen: false
+    });
   }
 
   componentDidMount() {
@@ -216,11 +287,30 @@ class DashBoard extends React.Component {
         zIndex: 100,
         position: 'fixed',
       },
-      hist:{
+      fab2: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 85,
+        left: 'auto',
+        zIndex: 200,
+        position: 'fixed',
+      },
+      hist: {
         top: 50,
         left: 30,
         zIndex: 100,
         position: 'fixed',
+      },
+      exitToApp: {
+        position: 'relative',
+        bottom: 3
+      },
+      appBarTitle: {
+        fontSize: 20,
+        height: 56,
+        position: 'relative',
+        bottom: 3
       }
     }
     return(
@@ -246,10 +336,28 @@ class DashBoard extends React.Component {
               <MuiThemeProvider><WeatherCard weather={this.state.weather} location={this.state.location}/></MuiThemeProvider>
               <MuiThemeProvider><FlightCard flight={this.state.flight}/></MuiThemeProvider>
               <MuiThemeProvider><FoodCard food={this.state.food}/></MuiThemeProvider>
-              <MuiThemeProvider><SightsCard sights={this.state.sights}/></MuiThemeProvider>
+              <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><NavigationCard/></MuiThemeProvider>
               <MuiThemeProvider><EventListCard events={this.state.events}/></MuiThemeProvider>
             </GridList>
+          </MuiThemeProvider>
+          <MuiThemeProvider>
+            <Drawer
+              width={600}
+              docked={false}
+              openSecondary={true}
+              open={this.state.drawerOpen}
+              onRequestChange={(open) => this.setState({drawerOpen: open})}
+            >
+              <AppBar
+                title="Trip Itinerary"
+                titleStyle={styles.appBarTitle}
+                iconElementLeft={<IconButton style={styles.exitToApp}><ExitToApp style={{fill: white}} /></IconButton>}
+                onLeftIconButtonTouchTap={this.exitToApp}
+                style={{height: 56}}
+              />
+              <Itinerary itinerary={this.state.itinerary} />
+            </Drawer>
           </MuiThemeProvider>
           <MuiThemeProvider>
             <Link to='/trip'>
@@ -259,6 +367,16 @@ class DashBoard extends React.Component {
                 label="Search"><ContentAdd />
               </FloatingActionButton>
             </Link>
+          </MuiThemeProvider>
+          <MuiThemeProvider>
+            <FloatingActionButton
+              style={styles.fab2}
+              backgroundColor={tealA700}
+              label="openItinerary"
+              onClick={this.toggleItinerary}
+            >
+              <Event />
+            </FloatingActionButton>
           </MuiThemeProvider>
         </div>
       </div>
