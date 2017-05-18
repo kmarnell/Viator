@@ -36,39 +36,54 @@ const styles = {
   }
 };
 
-const FoodCard = (props) => (
-  <div>
-    <Card style={styles.card}>
-      <CardHeader
-        title="Food"
-        subtitle={props.food.length + ' restaurants nearby'}
-        avatar={<Avatar
-          icon={<MapsLocalDining />}
-          style={styles.avatar}
-        />}
-        style={styles.cardHeader}
-      />
-      <Divider/>
-      <List
-        style={styles.list}
-      >
-        {props.food.map((restaurant) => (
-          <ListItem
-            key={restaurant.place_id}
-            leftAvatar={<Avatar src={restaurant.photo} />}
-            primaryText={restaurant.name}
-            secondaryText={restaurant.formatted_address + ' · Rating:' + restaurant.rating}
-            rightIcon={
-              <IconButton style={styles.star}>
-                <StarBorder color={grey500} />
-              </IconButton>}
-            target="_blank"
-            href={restaurant.url}
+class FoodCard extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div>
+        <Card style={styles.card}>
+          <CardHeader
+            title="Food"
+            subtitle={this.props.food.length + ' restaurants nearby'}
+            avatar={<Avatar
+              icon={<MapsLocalDining />}
+              style={styles.avatar}
+            />}
+            style={styles.cardHeader}
           />
-        ))}
-      </List>
-    </Card>
-  </div>
-)
+          <Divider/>
+          <List
+            style={styles.list}
+          >
+            {this.props.food.map((restaurant) => (
+              <ListItem
+                key={restaurant.place_id}
+                leftAvatar={<Avatar src={restaurant.photo} />}
+                primaryText={restaurant.name}
+                secondaryText={
+                  <p>
+                  <span>Rating: {restaurant.rating}</span><br/>
+                  <span>{restaurant.formatted_address}</span>
+                  </p>
+                }
+                secondaryTextLines={2}
+                rightIcon={
+                  <IconButton style={styles.star}>
+                    <StarBorder color={grey500} />
+                  </IconButton>}
+                target="_blank"
+                href={restaurant.url}
+              />
+            ))}
+          </List>
+        </Card>
+      </div>
+    );
+  }
+}
+
 
 export default FoodCard;
