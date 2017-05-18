@@ -168,11 +168,25 @@ class DashBoard extends React.Component {
         flightDuration = flightDuration + ' Minute(s)';
       }
       dateOnly = dateOnly[5] === '0' ? (dateOnly.slice(6,7) + '/' + dateOnly.slice(8,10) + '/' + dateOnly.slice(0,4)) : (dateOnly.slice(5,7) + '/' + dateOnly.slice(8,10) + '/' + dateOnly.slice(0,4));
+      var departure;
+      var arrival;
+      if (data.flightStatuses[0].arrivalAirportFsCode === data.appendix.airports[0].faa) {
+        arrival = data.appendix.airports[0].city + ', ' + data.appendix.airports[0].stateCode
+      }
+      else {
+        arrival = data.appendix.airports[1].city + ', ' + data.appendix.airports[1].stateCode
+      }
+      if (data.flightStatuses[0].departureAirportFsCode === data.appendix.airports[0].faa) {
+        departure = data.appendix.airports[0].city + ', ' + data.appendix.airports[0].stateCode
+      }
+      else {
+        departure = data.appendix.airports[1].city + ', ' + data.appendix.airports[1].stateCode
+      }
       var obj = {
-        departurePort: data.appendix.airports[0].fs,
-        arrivalPort: data.appendix.airports[1].fs,
-        departureCity: data.appendix.airports[0].city + ', '+data.appendix.airports[0].stateCode,
-        arrivalCity: data.appendix.airports[1].city + ',' + data.appendix.airports[1].stateCode,
+        departurePort: data.flightStatuses[0].departureAirportFsCode,
+        arrivalPort: data.flightStatuses[0].arrivalAirportFsCode,
+        departureCity: departure,
+        arrivalCity: arrival,
         leaveTime: newTime,
         flightDuration: flightDuration,
         airline: data.appendix.airlines[0].name,
