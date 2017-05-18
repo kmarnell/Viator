@@ -15,14 +15,18 @@ db.once('open', () => {
 
 
 const userSchema = mongoose.Schema({
-  
+
     user: String,
     month: String,
     day: String,
     year: String,
     Airline: String,
     flight: String,
-    destination: String
+    destination: String,
+    returnFlight: String,
+    returnMonth: String,
+    returnDay: String,
+    returnMonth: String
 
   });
 

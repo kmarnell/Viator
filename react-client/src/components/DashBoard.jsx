@@ -56,6 +56,7 @@ class DashBoard extends React.Component {
       sights: [],
       events: [],
       flight: {},
+      returnFlight : {},
       flightsArray: [],
       index: 0,
       weather: [],
@@ -109,7 +110,8 @@ class DashBoard extends React.Component {
         flightsArray:data,
         location: data[0].destination
       })
-      context.flightSearch(data[0].Airline,data[0].flight,data[0].month,data[0].day,data[0].year);
+      context.flightSearch(data[0].Airline,data[0].flight,data[0].month,data[0].day,data[0].year, "flight");
+      context.flightSearch(data[0].Airline,data[0].returnFlight,data[0].returnMonth,data[0].returnDay,data[0].year, "returnFlight")
       context.searchGoogle(data[0].destination);
       context.searchFood(data[0].destination);
       context.searchWeather(data[0].destination);
@@ -121,7 +123,7 @@ class DashBoard extends React.Component {
     })
   }
 
-  flightSearch(airline, flight, month, day, year) {
+  flightSearch(airline, flight, month, day, year, flightType) {
     $.get('/flightStatus', {
       airline: airline,
       flight: flight,
@@ -130,7 +132,12 @@ class DashBoard extends React.Component {
       year: year
     })
     .done((data) => {
-      console.log('flight data', data);
+      if (flightType === "flight") {
+        console.log('departure data', data)
+      }
+      else if (flightType === "returnFlight") {
+        console.log('return data', data);
+      }
       var dateTime = data.flightStatuses[0].departureDate.dateLocal;
       var newTime;
       var dateOnly;
@@ -152,7 +159,7 @@ class DashBoard extends React.Component {
         newTime = hours.toString() + ':'+ minutes + ' AM'
       }
 
-      var flightDuration = data.flightStatuses[0].flightDurations.scheduledAirMinutes;
+      var flightDuration = data.flightStatuses[0].flightDurations.scheduledBlockMinutes;
       if (flightDuration > 60) {
         hours = Math.floor(flightDuration / 60);
         minutes = flightDuration - (hours * 60);
@@ -172,9 +179,18 @@ class DashBoard extends React.Component {
         leaveDate: dateOnly,
         flightNumber: flight,
       };
-      this.setState({
-        flight: obj
-      });
+      if (flightType === "flight") {
+        console.log("FLIGHT OBJ", obj)
+        this.setState({
+          flight: obj
+        });
+      }
+      else if (flightType === "returnFlight") {
+        console.log("RETURN FLIGHT", obj)
+        this.setState({
+          returnFlight: obj
+        })
+      }
     });
 
   }
@@ -269,6 +285,8 @@ class DashBoard extends React.Component {
   }
 
   render() {
+    console.log('RETURN FLIGHT STATE', this.state.returnFlight)
+    console.log('ORIGINAL FLIGHT STATE', this.state.flight)
     const styles = {
       gridList: {
         width: 'auto',
@@ -334,7 +352,7 @@ class DashBoard extends React.Component {
               cols = {3}
               padding = {25}>
               <MuiThemeProvider><WeatherCard weather={this.state.weather} location={this.state.location}/></MuiThemeProvider>
-              <MuiThemeProvider><FlightCard flight={this.state.flight}/></MuiThemeProvider>
+              <MuiThemeProvider><FlightCard returnFlight = {this.state.returnFlight} flight={this.state.flight}/></MuiThemeProvider>
               <MuiThemeProvider><FoodCard food={this.state.food}/></MuiThemeProvider>
               <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><NavigationCard/></MuiThemeProvider>

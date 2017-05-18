@@ -9,6 +9,8 @@ import ActionFlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff';
 import Avatar from 'material-ui/Avatar';
 import Arrow from 'material-ui/svg-icons/navigation/arrow-forward';
 import Divider from 'material-ui/Divider';
+import RaisedButton from 'material-ui/RaisedButton';
+
 import {
   grey500, white, teal500,
 } from 'material-ui/styles/colors';
@@ -17,7 +19,20 @@ import {
  class FlightCard extends React.Component {
   constructor (props) {
     super(props);
+    this.state = {
+      returnFlight: false
+    }
+    this.changeToReturnFlight = this.changeToReturnFlight.bind(this);
+    this.changeToDepartureFlight = this.changeToDepartureFlight.bind(this);
 
+  }
+
+  changeToReturnFlight () {
+    this.setState({returnFlight: true})
+  }
+
+  changeToDepartureFlight() {
+    this.setState({returnFlight: false})
   }
 
 
@@ -29,7 +44,7 @@ import {
       },
       card: {
         width: '100%',
-        height: 400,
+        height: 364,
       },
       avatar: {
         backgroundColor: teal500,
@@ -60,69 +75,137 @@ import {
         fontWeight: 300,
       },
     }
-    return (
-      <div>
-        <MuiThemeProvider>
-          <Card style={styles.card}>
-            <CardHeader
-              title="Flight Information"
-              subtitle='Status: On-Time'
-              avatar={<Avatar icon={<ActionFlightTakeoff />}
+    if (!this.state.returnFlight) {
+      return (
+        <div>
+          <RaisedButton onTouchTap = { (e) => {e.preventDefault(); this.changeToReturnFlight()}} fullWidth = {true} label={"Return Flight Info"} primary={true} />
+          <MuiThemeProvider>
+            <Card style={styles.card}>
+              <CardHeader
+                title="Flight Information"
+                subtitle='Status: On-Time'
+                avatar={<Avatar icon={<ActionFlightTakeoff />}
+                  style={styles.avatar}
+                  color={white}/>}
+                style={styles.cardHeader}/>
+              <Divider/>
+              <CardTitle
+                title={this.props.flight.airline + ' ' + this.props.flight.flightNumber}
+                subtitle={'Leaving at: ' + this.props.flight.leaveTime + ' on ' + this.props.flight.leaveDate} />
+              <GridList
+                style = {styles.gridList}
+                cols = {9} >
+                <GridTile
+                  cols = {4}
+                  style = {styles.centerDiv} >
+                  <div
+                    style = {styles.center} >
+                    <h3
+                      style = {styles.airport}>
+                      {this.props.flight.departurePort}
+                    </h3>
+                    <h2
+                      style = {styles.city}>
+                      {this.props.flight.departureCity}
+                    </h2>
+                  </div>
+                </GridTile>
+                <GridTile
+                  style = {styles.centerDiv} >
+                  <Arrow
+                    style = {styles.centerArrow} />
+                </GridTile>
+                <GridTile
+                  cols = {4}
+                  style = {styles.centerDiv} >
+                  <div
+                    style = {styles.center} >
+                    <h3
+                      style = {styles.airport}>
+                      {this.props.flight.arrivalPort}
+                    </h3>
+                    <h2
+                      style = {styles.city}>
+                      {this.props.flight.arrivalCity}
+                    </h2>
+                  </div>
+                </GridTile>
+              </GridList>
+              <CardHeader
+                title={'Flight Duration ' + this.props.flight.flightDuration}
+                style={styles.cardHeader}>
+              </CardHeader>
+            </Card>
+          </MuiThemeProvider>
+        </div>
+      )
+      }
+        else {
+          return(
+          <div>
+            <RaisedButton onTouchTap = { (e) => {e.preventDefault(); this.changeToDepartureFlight()}} fullWidth = {true} label={"Departure Flight Info"} primary={true} />
+            <MuiThemeProvider>
+              <Card style={styles.card}>
+              <CardHeader
+                title="Return Information"
+                subtitle='Status: On-Time'
+                avatar={<Avatar icon={<ActionFlightTakeoff />}
                 style={styles.avatar}
                 color={white}/>}
-              style={styles.cardHeader}/>
-            <Divider/>
-            <CardTitle
-              title={this.props.flight.airline + ' ' + this.props.flight.flightNumber}
-              subtitle={'Leaving at: ' + this.props.flight.leaveTime + ' on ' + this.props.flight.leaveDate} />
-            <GridList
-              style = {styles.gridList}
-              cols = {9} >
-              <GridTile
-                cols = {4}
-                style = {styles.centerDiv} >
-                <div
-                  style = {styles.center} >
-                  <h3
-                    style = {styles.airport}>
-                    {this.props.flight.departurePort}
-                  </h3>
-                  <h2
-                    style = {styles.city}>
-                    {this.props.flight.departureCity}
-                  </h2>
-                </div>
-              </GridTile>
-              <GridTile
-                style = {styles.centerDiv} >
-                <Arrow
-                  style = {styles.centerArrow} />
-              </GridTile>
-              <GridTile
-                cols = {4} 
-                style = {styles.centerDiv} >
-                <div
-                  style = {styles.center} >
-                  <h3
-                    style = {styles.airport}>
-                    {this.props.flight.arrivalPort}
-                  </h3>
-                  <h2
-                    style = {styles.city}>
-                    {this.props.flight.arrivalCity}
-                  </h2>
-                </div>
-              </GridTile>
-            </GridList>
-            <CardHeader
-              title={'Flight Duration ' + this.props.flight.flightDuration}
-              style={styles.cardHeader}>
-            </CardHeader>
+                style={styles.cardHeader}/>
+              <CardTitle
+                title={this.props.returnFlight.airline + ' ' + this.props.returnFlight.flightNumber}
+                subtitle={'Leaving at: ' + this.props.returnFlight.leaveTime + ' on ' + this.props.returnFlight.leaveDate} />
+              <GridList
+                style = {styles.gridList}
+                cols = {9} >
+                <GridTile
+                  cols = {4}
+                  style = {styles.centerDiv} >
+                  <div
+                    style = {styles.center} >
+                    <h3
+                      style = {styles.airport}>
+                      {this.props.returnFlight.departurePort}
+                    </h3>
+                    <h2
+                      style = {styles.city}>
+                      {this.props.returnFlight.departureCity}
+                    </h2>
+                  </div>
+                </GridTile>
+                <GridTile
+                  style = {styles.centerDiv} >
+                  <Arrow
+                    style = {styles.centerArrow} />
+                </GridTile>
+                <GridTile
+                  cols = {4}
+                  style = {styles.centerDiv} >
+                  <div
+                    style = {styles.center} >
+                    <h3
+                      style = {styles.airport}>
+                      {this.props.returnFlight.arrivalPort}
+                    </h3>
+                    <h2
+                      style = {styles.city}>
+                      {this.props.returnFlight.arrivalCity}
+                    </h2>
+                  </div>
+                </GridTile>
+              </GridList>
+              <CardHeader
+                title={'Flight Duration ' + this.props.returnFlight.flightDuration}
+                style={styles.cardHeader}>
+              </CardHeader>
+
           </Card>
         </MuiThemeProvider>
       </div>
     )
   }
+}
 }
 
 

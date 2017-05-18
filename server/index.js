@@ -125,7 +125,6 @@ app.get('/weather', (req, res) => {
 
 app.get('/events', (req, res) => {
   var location = req.query.location
-  console.log(location);
   request.get(`https://www.eventbriteapi.com/v3/events/search/?token=UHLKIOWHWZNIOUNFTLKN&sort_by=distance&location.address=${location}&categories=109%2C133%2C110&location.within=10mi&start_date.keyword=this_week`, (error, response, body) => {
     if (error) console.error(error);
     body = JSON.parse(body);
@@ -225,7 +224,6 @@ app.get('/flightStatus', (req, res) => {
   request.get(`https://api.flightstats.com/flex/flightstatus/rest/v2/json/flight/status/${req.query.airline}/${req.query.flight}/arr/${req.query.year}/${req.query.day}/${req.query.month}?appId=${FLIGHT_API_KEY}&appKey=${FLIGHT_APP_KEY}&utc=false`,
   (error, response, body) => {
     if (error) console.error(error);
-    console.log(JSON.parse(body));
     res.send(JSON.parse(body));
   });
 })
@@ -233,16 +231,27 @@ app.get('/flightStatus', (req, res) => {
 // FOR ADDING DATA INTO THE DATEBASE
 
 app.post('/database/save', (req, res) => {
+  console.log(req.body);
 
     var dateTotal = req.body.date;
     var monthOnly;
     var dayOnly;
     var yearOnly;
 
+    var returnDateTotal = req.body.returnDate;
+    var returnMonthOnly;
+    var returnDayOnly;
+    var returnYearOnly;
+
+    returnYearOnly = returnDateTotal.slice(0,4);
+    returnDayOnly = Number(returnDateTotal.slice(5,7)).toString();
+    returnMonthOnly = Number(returnDateTotal.slice(8,10)).toString();
+
     yearOnly = dateTotal.slice(0,4);
     dayOnly = Number(dateTotal.slice(5,7)).toString();
     monthOnly = Number(dateTotal.slice(8,10)).toString();
     userId = userId.toString();
+
 
     const addNew = new User({
       user: userId,
@@ -251,7 +260,12 @@ app.post('/database/save', (req, res) => {
       year: yearOnly,
       Airline: req.body.airline,
       flight: req.body.flightNumber,
-      destination: req.body.finalDestination
+      destination: req.body.finalDestination,
+      returnFlight: req.body.returnFlightNumber,
+      returnMonth: returnMonthOnly,
+      returnDay: returnDayOnly,
+      returnMonth: returnMonthOnly
+
     })
 
     addNew.save((err,result) => {
