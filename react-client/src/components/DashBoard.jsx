@@ -381,7 +381,7 @@ class DashBoard extends React.Component {
           </MuiThemeProvider>
           <MuiThemeProvider>
             <Drawer
-              width={600}
+              width={500}
               docked={false}
               openSecondary={true}
               open={this.state.drawerOpen}

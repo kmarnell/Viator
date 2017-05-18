@@ -47,7 +47,7 @@ class FoodCard extends React.Component {
     this.state = {
       primary: '',
       secondary: '',
-      url: ''
+      url: '',
     };
   }
 
@@ -56,7 +56,7 @@ class FoodCard extends React.Component {
     this.setState({
       primary: name,
       secondary: address,
-      url: url
+      url: url,
     });
   }
 
@@ -106,14 +106,18 @@ class FoodCard extends React.Component {
                   </IconButton>}
               />
             ))}
+            <DatePicker
+              ref="dp"
+              onChange={(nullVal, date) => {
+                let context = this;
+                this.props.submitToItinerary(date, context.state.primary, context.state.secondary, context.state.url, 'food');
+                this.setState({
+                  showDatePicker: false
+                });
+              }}
+              style={{display: 'none'}}
+            />
           </List>
-          <DatePicker
-            ref="dp"
-            onChange={(nullVal, date) => {
-              let context = this;
-              this.props.submitToItinerary(date, context.state.primary, context.state.secondary, context.state.url, 'food');
-            }}
-          />
         </Card>
       </div>
     );
