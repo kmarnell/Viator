@@ -105,15 +105,14 @@ app.get('/auth/google/callback',
 
 // API routes
 app.get('/geoCoord', (req, res) => {
-  let position = req.query.position; 
+  let position = req.query.position;
   let geoCoord;
-  request.get(`https://maps.googleapis.com/maps/api/geocode/json?key=${GOOGLE_KEY}&address=${position}`, 
+  request.get(`https://maps.googleapis.com/maps/api/geocode/json?key=${GOOGLE_KEY}&address=${position}`,
     (error, response, body) => {
       if (error) {
         console.error(err);
       }
       geoCoord = JSON.parse(body).results[0].geometry['location']
-      console.log('passing geoCoord: ', geoCoord)
       res.send(JSON.stringify(geoCoord));
     });
 })
