@@ -2,6 +2,7 @@ import React from 'react';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
+import DatePicker from 'material-ui/DatePicker';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import MapsLocalDining from 'material-ui/svg-icons/maps/local-dining';
@@ -39,6 +40,15 @@ const styles = {
 class FoodCard extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      primary: '',
+      seconday: '',
+      url: ''
+    };
+  }
+
+  addToItinerary(name, address, url) {
+    this.refs.dp.openDialog();
   }
 
   render() {
@@ -71,7 +81,10 @@ class FoodCard extends React.Component {
                 }
                 secondaryTextLines={2}
                 rightIcon={
-                  <IconButton style={styles.star}>
+                  <IconButton
+                    style={styles.star}
+                    onTouchTap={() => { this.addToItinerary(restaurant.name, restaurant.formatted_address, restaurant.url); }}
+                  >
                     <StarBorder color={grey500} />
                   </IconButton>}
                 target="_blank"
@@ -79,6 +92,10 @@ class FoodCard extends React.Component {
               />
             ))}
           </List>
+          <DatePicker
+            ref="dp"
+
+          />
         </Card>
       </div>
     );
