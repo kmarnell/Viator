@@ -16,11 +16,51 @@ import GoogleMapReact from 'google-map-react';
 import FlatButton from 'material-ui/FlatButton';
 import $ from 'jquery';
 
+const bodyParser = require('body-parser');
+import config from '../../../server/config.js';
+
+
+const uberIcon = {
+  'uber': "./UBER_API_Button_1x_Grey_2px_roung.png"
+}
 
  class NavigationCard extends React.Component {
   constructor (props) {
     super(props);
-     this.getGeoCoord = this.getGeoCoord.bind(this);
+
+    this.state = {
+      price: ''
+    }
+    this.getPriceEstimates = this.getPriceEstimates.bind(this);
+  }
+    getPriceEstimates() {
+    var data = JSON.stringify({
+       start_latitude: 37.7749,
+       start_longitude: 122.4194,
+       end_latitude: 37.8044,
+       end_longitude: 122.2711    
+     });
+
+    $.ajax({
+      type: 'POST',
+      url: '/estimates/price', 
+      headers: {
+        Authorization: config.UBER_SERVER_TOKEN
+      },
+      contentType: 'application/json',
+      data: data, 
+      success: (data) => {
+        this.setState({price: data});
+      },
+      error: function() {
+        console.log("error!")
+      }
+    })
+
+  }
+
+  componentDidMount() {
+    this.getPriceEstimates();
   }
   
   getGeoCoord(position) {
@@ -92,10 +132,12 @@ import $ from 'jquery';
               <div
                 style={styles.map}>
               </div>
+              <div>Price Estimate: {this.state.price}</div>
               <CardActions style={styles.actions}>
                 <FlatButton primary = {true} label="NAVIGATE" />
                 <FlatButton label="SHARE" />
               </CardActions>
+
         </Card>
       </div>
     )
