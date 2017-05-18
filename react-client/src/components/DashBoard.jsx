@@ -212,25 +212,52 @@ class DashBoard extends React.Component {
       this.setState({
         weather: data,
         location: location
-      })
-    })
+      });
+    });
   }
 
-  submitToItinerary(date) {
-    let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
-    console.log(itineraryKey);
-    if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
+  submitToItinerary(date, primary, secondary) {
+    console.log(primary);
+    // let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
-    } else {
-      let newItem = {
-        itineraryKey: []
-      };
-      let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
+    // if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
+    //   console.log('HERE')
+    //   let newItem = {
+    //     primary: primary,
+    //     secondary: secondary
+    //   };
+    //   // let itineraryItems = this.state.itinerary[itineraryKey].push(newItem);
+    //   let itineraryItems = this.state.itinerary[itineraryKey];
+    //   itineraryItems.push(newItem);
 
-      this.setState({
-        itinerary: newItineraryObj
-      });
-    }
+    //   console.log(itineraryItems);
+
+    //   let newDateItem = {};
+    //   newDateItem[itineraryKey] = itineraryItems;
+
+    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
+
+    //   this.setState({
+    //     itinerary: newItineraryObj
+    //   });
+
+    //   var context = this;
+    //   setTimeout(function() {console.log(context.state.itinerary)}, 1000)
+
+    // } else {
+    //   let newItem = {};
+    //   newItem[itineraryKey] = [{
+    //     primary: primary,
+    //     secondary: secondary
+    //   }];
+    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
+
+    //   this.setState({
+    //     itinerary: newItineraryObj
+    //   });
+    //   var context = this;
+    //   setTimeout(function() {console.log(context.state.itinerary)}, 1000)
+    // }
   }
 
   toggleItinerary() {

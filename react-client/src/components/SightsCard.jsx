@@ -37,11 +37,20 @@ class SightsCard extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      primary: '',
+      secondary: ''
+    };
+
     this.addToItinerary = this.addToItinerary.bind(this);
   }
 
-  addToItinerary() {
+  addToItinerary(name, address) {
     this.refs.dp.openDialog();
+    this.setState({
+      primary: name,
+      secondary: address
+    });
   }
 
   render() {
@@ -68,7 +77,7 @@ class SightsCard extends React.Component {
                 title={sight.name}
                 subtitle={<b>{sight.formatted_address}</b>}
                 actionIcon={
-                    <IconButton onTouchTap={this.addToItinerary}>
+                    <IconButton onTouchTap={() => { this.addToItinerary(sight.name, sight.formatted_address); }}>
                       <StarBorder color="white" />
                     </IconButton>
                 }
@@ -78,7 +87,10 @@ class SightsCard extends React.Component {
                 </a>
                 <DatePicker
                   ref="dp"
-                  onChange={(nullVal, date) => { this.props.submitToItinerary(date); }}
+                  onChange={(nullVal, date) => {
+                    let context = this;
+                    this.props.submitToItinerary(date, context.state.primary, context.state.secondary);
+                  }}
                 />
               </GridTile>
             ))}
