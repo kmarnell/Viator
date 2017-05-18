@@ -29,6 +29,7 @@ import MenuItem from 'material-ui/MenuItem';
 
 
 
+
 class DashBoard extends React.Component {
   constructor (props) {
     super(props);
@@ -156,6 +157,24 @@ class DashBoard extends React.Component {
 
   }
 
+  getGeoLocation(position) { //takes address retunr latlong
+
+    console.log('in dashboard method getGeoLocation', position);
+    $.ajax({
+      type: 'GET',
+      url: '/geoLocation',
+      contentType: 'application/json',
+      data: JSON.stringify(position.replace(/\s+/g, '+'))
+    })
+    .done(function(data) {
+      console.log('getGeoLocation dashboard success', data);
+    })
+    .fail(function(err) {
+      console.log('getGeoLocation dashboard fail', err)
+    })
+
+  };
+
   historyChange(event, index) {
     this.setState({
       index: index,
@@ -247,8 +266,8 @@ class DashBoard extends React.Component {
               <MuiThemeProvider><FlightCard flight={this.state.flight}/></MuiThemeProvider>
               <MuiThemeProvider><FoodCard food={this.state.food}/></MuiThemeProvider>
               <MuiThemeProvider><SightsCard sights={this.state.sights}/></MuiThemeProvider>
-              <MuiThemeProvider><NavigationCard/></MuiThemeProvider>
-              <MuiThemeProvider><EventListCard events={this.state.events}/></MuiThemeProvider>
+              <MuiThemeProvider ><NavigationCard geoLocation={this.getGeoLocation(this.state.location)} geoAirportLoc={this.getGeoLocation(this.flight.destination)}/></MuiThemeProvider>
+              <MuiThemeProvider><EventListCard events={this.state.events} /></MuiThemeProvider>
             </GridList>
           </MuiThemeProvider>
           <MuiThemeProvider>

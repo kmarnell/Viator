@@ -104,6 +104,12 @@ app.get('/auth/google/callback',
   });
 
 // API routes
+app.get('/geoLocation', (req, res) => {
+  let _url = `https://maps.googleapis.com/maps/api/geocode/json?address=${position}&key=AIzaSyCTNveTrF9YoS4qDvdHF9K0kH69zUcbWyU`; 
+  console.log('index.js /geoLocation', req.body);
+ 
+});
+
 app.get('/weather', (req, res) => {
   // Call Geocoding API for coordinates based on location
   const getCoords = new Promise((resolve, reject) => {
@@ -229,6 +235,7 @@ app.get('/flightStatus', (req, res) => {
     res.send(JSON.parse(body));
   });
 })
+
 
 // FOR ADDING DATA INTO THE DATEBASE
 

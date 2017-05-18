@@ -21,6 +21,11 @@ import FlatButton from 'material-ui/FlatButton';
     super(props);
   }
 
+  getCoord(position) {
+    let _tempPosition = '126'
+    this.props.location(position)
+  }
+
   render() {
     const styles = {
       card: {
@@ -51,7 +56,7 @@ import FlatButton from 'material-ui/FlatButton';
           style={styles.card}>
           <CardHeader
               title="Navigation from Airport"
-              subtitle='Address should go here.'
+              subtitle="From: {this.props.geoAirportLoc} <br>>/br>To: {this.props.location()}"
               avatar={<Avatar icon={<MapNavigation />}
                 style={styles.avatar}
                 color={white}/>}
