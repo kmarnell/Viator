@@ -370,7 +370,7 @@ class DashBoard extends React.Component {
               <MuiThemeProvider><WeatherCard weather={this.state.weather} location={this.state.location}/></MuiThemeProvider>
               <MuiThemeProvider><FlightCard returnFlight = {this.state.returnFlight} flight={this.state.flight}/></MuiThemeProvider>
               <MuiThemeProvider><NavigationCard/></MuiThemeProvider>
-              <MuiThemeProvider><FoodCard food={this.state.food}/></MuiThemeProvider>
+              <MuiThemeProvider><FoodCard food={this.state.food} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><EventListCard events={this.state.events} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
             </GridList>

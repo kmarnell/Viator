@@ -34,6 +34,10 @@ const styles = {
     top: '0px',
     right: '0px',
     marginRight: '0px'
+  },
+  hyperlink: {
+    textDecoration: 'none',
+    color: 'inherit'
   }
 };
 
@@ -42,13 +46,18 @@ class FoodCard extends React.Component {
     super(props);
     this.state = {
       primary: '',
-      seconday: '',
+      secondary: '',
       url: ''
     };
   }
 
   addToItinerary(name, address, url) {
     this.refs.dp.openDialog();
+    this.setState({
+      primary: name,
+      secondary: address,
+      url: url
+    });
   }
 
   render() {
@@ -72,11 +81,19 @@ class FoodCard extends React.Component {
               <ListItem
                 key={restaurant.place_id}
                 leftAvatar={<Avatar src={restaurant.photo} />}
-                primaryText={restaurant.name}
+                primaryText={
+                  <p>
+                    <a target="_blank" href={restaurant.url} style={styles.hyperlink}>
+                      {restaurant.name}
+                    </a>
+                  </p>
+                }
                 secondaryText={
                   <p>
-                  <span>Rating: {restaurant.rating}</span><br/>
-                  <span>{restaurant.formatted_address}</span>
+                    <a target="_blank" href={restaurant.url} style={styles.hyperlink}>
+                      <span>Rating: {restaurant.rating}</span><br/>
+                      <span>{restaurant.formatted_address}</span>
+                    </a>
                   </p>
                 }
                 secondaryTextLines={2}
@@ -87,14 +104,15 @@ class FoodCard extends React.Component {
                   >
                     <StarBorder color={grey500} />
                   </IconButton>}
-                target="_blank"
-                href={restaurant.url}
               />
             ))}
           </List>
           <DatePicker
             ref="dp"
-
+            onChange={(nullVal, date) => {
+              let context = this;
+              this.props.submitToItinerary(date, context.state.primary, context.state.secondary, context.state.url, 'food');
+            }}
           />
         </Card>
       </div>
