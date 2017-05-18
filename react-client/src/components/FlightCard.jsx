@@ -153,6 +153,7 @@ import {
                 style={styles.avatar}
                 color={white}/>}
                 style={styles.cardHeader}/>
+              <Divider/>
               <CardTitle
                 title={this.props.returnFlight.airline + ' ' + this.props.returnFlight.flightNumber}
                 subtitle={'Leaving at: ' + this.props.returnFlight.leaveTime + ' on ' + this.props.returnFlight.leaveDate} />
