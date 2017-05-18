@@ -20,9 +20,6 @@ const bodyParser = require('body-parser');
 import config from '../../../server/config.js';
 
 
-const uberIcon = {
-  'uber': "./UBER_API_Button_1x_Grey_2px_roung.png"
-}
 
  class NavigationCard extends React.Component {
   constructor (props) {
@@ -117,6 +114,26 @@ const uberIcon = {
       }
     }
 
+    const uberBar = './uberImage.png';
+    const carIcon = './carIcon.png';
+
+    const uberImageStyle = {
+      backgroundImage: `url(${uberBar})`,
+      width: '100%',
+      paddingBottom: '20'
+    }
+
+    const carStyle = {
+      backgroundImage: `url(${carIcon})`
+    }
+
+    const priceStyle = {
+      textAlign: 'right',
+      width: '300',
+      height: '44',
+      margin: 'auto'
+    }
+
     return (
       <div>
         <Card
@@ -132,12 +149,9 @@ const uberIcon = {
               <div
                 style={styles.map}>
               </div>
-              <div>Price Estimate: {this.state.price}</div>
-              <CardActions style={styles.actions}>
-                <FlatButton primary = {true} label="NAVIGATE" />
-                <FlatButton label="SHARE" />
-              </CardActions>
-
+              <div style={uberImageStyle}> 
+                <p style={priceStyle}>Price Estimate: {this.state.price}</p>
+              </div>
         </Card>
       </div>
     )
