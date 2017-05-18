@@ -246,14 +246,15 @@ class DashBoard extends React.Component {
     });
   }
 
-  submitToItinerary(date, primary, secondary, url) {
+  submitToItinerary(date, primary, secondary, url, type) {
     let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
     if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
       let newItem = {
         primary: primary,
         secondary: secondary,
-        url: url
+        url: url,
+        type: type
       };
       let itineraryItems = this.state.itinerary[itineraryKey];
       itineraryItems.push(newItem);
@@ -272,7 +273,8 @@ class DashBoard extends React.Component {
       newItem[itineraryKey] = [{
         primary: primary,
         secondary: secondary,
-        url: url
+        url: url,
+        type: type
       }];
       let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
 

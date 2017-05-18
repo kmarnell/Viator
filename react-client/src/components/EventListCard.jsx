@@ -91,7 +91,7 @@ class EventListCard extends React.Component {
                 cols = {2}
                 rows = {2}
                 actionIcon={
-                  <IconButton onTouchTap={() => { this.addToItinerary(event[1].description, event[1].img); }}>
+                  <IconButton onTouchTap={() => { this.addToItinerary(event[1].description, event[1].url); }}>
                     <StarBorder color="white" />
                   </IconButton>
                 }
@@ -103,7 +103,7 @@ class EventListCard extends React.Component {
                   ref="dp"
                   onChange={(nullVal, date) => {
                     let context = this;
-                    this.props.submitToItinerary(date, context.state.primary, context.state.secondary, context.state.url);
+                    this.props.submitToItinerary(date, context.state.primary, context.state.secondary, context.state.url, 'event');
                   }}
                 />
               </GridTile>
