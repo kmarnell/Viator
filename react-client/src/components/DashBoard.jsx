@@ -217,47 +217,37 @@ class DashBoard extends React.Component {
   }
 
   submitToItinerary(date, primary, secondary) {
-    console.log(primary);
-    // let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
-    // if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
-    //   console.log('HERE')
-    //   let newItem = {
-    //     primary: primary,
-    //     secondary: secondary
-    //   };
-    //   // let itineraryItems = this.state.itinerary[itineraryKey].push(newItem);
-    //   let itineraryItems = this.state.itinerary[itineraryKey];
-    //   itineraryItems.push(newItem);
+    if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
+      let newItem = {
+        primary: primary,
+        secondary: secondary
+      };
+      let itineraryItems = this.state.itinerary[itineraryKey];
+      itineraryItems.push(newItem);
 
-    //   console.log(itineraryItems);
+      let newDateItem = {};
+      newDateItem[itineraryKey] = itineraryItems;
 
-    //   let newDateItem = {};
-    //   newDateItem[itineraryKey] = itineraryItems;
+      let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
 
-    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
+      this.setState({
+        itinerary: newItineraryObj
+      });
 
-    //   this.setState({
-    //     itinerary: newItineraryObj
-    //   });
+    } else {
+      let newItem = {};
+      newItem[itineraryKey] = [{
+        primary: primary,
+        secondary: secondary
+      }];
+      let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
 
-    //   var context = this;
-    //   setTimeout(function() {console.log(context.state.itinerary)}, 1000)
-
-    // } else {
-    //   let newItem = {};
-    //   newItem[itineraryKey] = [{
-    //     primary: primary,
-    //     secondary: secondary
-    //   }];
-    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
-
-    //   this.setState({
-    //     itinerary: newItineraryObj
-    //   });
-    //   var context = this;
-    //   setTimeout(function() {console.log(context.state.itinerary)}, 1000)
-    // }
+      this.setState({
+        itinerary: newItineraryObj
+      });
+    }
   }
 
   toggleItinerary() {
@@ -364,7 +354,7 @@ class DashBoard extends React.Component {
                 onLeftIconButtonTouchTap={this.exitToApp}
                 style={{height: 56}}
               />
-              <Itinerary />
+              <Itinerary itinerary={this.state.itinerary} />
             </Drawer>
           </MuiThemeProvider>
           <MuiThemeProvider>
