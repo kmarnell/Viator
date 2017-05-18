@@ -98,6 +98,8 @@ class DashBoard extends React.Component {
     })
   }
 
+  
+
   databaseFlightSearch() {
     var context = this;
     $.ajax({
@@ -109,6 +111,7 @@ class DashBoard extends React.Component {
       context.setState({
         flightsArray:data,
         location: data[0].destination
+
       })
       context.flightSearch(data[0].Airline,data[0].flight,data[0].month,data[0].day,data[0].year, "flight");
       context.flightSearch(data[0].Airline,data[0].returnFlight,data[0].returnMonth,data[0].returnDay,data[0].year, "returnFlight")
@@ -206,7 +209,6 @@ class DashBoard extends React.Component {
         })
       }
     });
-
   }
 
   historyChange(event, index) {
@@ -296,6 +298,7 @@ class DashBoard extends React.Component {
     });
   }
 
+
   componentDidMount() {
     this.databaseFlightSearch();
   }
@@ -369,10 +372,11 @@ class DashBoard extends React.Component {
               padding = {25}>
               <MuiThemeProvider><WeatherCard weather={this.state.weather} location={this.state.location}/></MuiThemeProvider>
               <MuiThemeProvider><FlightCard returnFlight = {this.state.returnFlight} flight={this.state.flight}/></MuiThemeProvider>
-              <MuiThemeProvider><NavigationCard/></MuiThemeProvider>
+              <MuiThemeProvider><NavigationCard  destination={this.state.location} arrivalPort={this.state.flight.arrivalPort} /></MuiThemeProvider>
               <MuiThemeProvider><FoodCard food={this.state.food} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><EventListCard events={this.state.events} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
+
             </GridList>
           </MuiThemeProvider>
           <MuiThemeProvider>
