@@ -34,18 +34,18 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
 const months = {
-  0: 'January',
-  1: 'February',
-  2: 'March',
-  3: 'April',
-  4: 'May',
-  5: 'June',
-  6: 'July',
-  7: 'August',
-  8: 'September',
-  9: 'October',
-  10: 'November',
-  11: 'December'
+  0: 'aJanuary',
+  1: 'bFebruary',
+  2: 'cMarch',
+  3: 'dApril',
+  4: 'eMay',
+  5: 'fJune',
+  6: 'gJuly',
+  7: 'hAugust',
+  8: 'iSeptember',
+  9: 'jOctober',
+  10: 'kNovember',
+  11: 'lDecember'
 };
 
 class DashBoard extends React.Component {
@@ -216,13 +216,14 @@ class DashBoard extends React.Component {
     });
   }
 
-  submitToItinerary(date, primary, secondary) {
+  submitToItinerary(date, primary, secondary, url) {
     let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
     if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
       let newItem = {
         primary: primary,
-        secondary: secondary
+        secondary: secondary,
+        url: url
       };
       let itineraryItems = this.state.itinerary[itineraryKey];
       itineraryItems.push(newItem);
@@ -240,7 +241,8 @@ class DashBoard extends React.Component {
       let newItem = {};
       newItem[itineraryKey] = [{
         primary: primary,
-        secondary: secondary
+        secondary: secondary,
+        url: url
       }];
       let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
 
