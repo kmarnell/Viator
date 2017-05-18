@@ -98,7 +98,7 @@ class DashBoard extends React.Component {
     })
   }
 
-  
+
 
   databaseFlightSearch() {
     var context = this;
@@ -216,7 +216,9 @@ class DashBoard extends React.Component {
       index: index,
     }, function() {
       var flight = this.state.flightsArray[index];
-      this.flightSearch(flight.Airline,flight.flight,flight.month,flight.day,flight.year);
+      this.flightSearch(flight.Airline,flight.flight,flight.month,flight.day,flight.year, "flight");
+      this.flightSearch(flight.Airline,flight.returnFlight,flight.returnMonth,flight.returnDay,flight.year, "returnFlight");
+      this.fightSearch()
       this.searchGoogle(flight.destination);
       this.searchFood(flight.destination);
       this.searchWeather(flight.destination);
