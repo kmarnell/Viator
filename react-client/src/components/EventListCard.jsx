@@ -4,6 +4,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {GridList, GridTile} from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
+import DatePicker from 'material-ui/DatePicker';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import EventSeat from 'material-ui/svg-icons/action/event-seat';
 import Avatar from 'material-ui/Avatar';
@@ -21,16 +22,30 @@ class EventListCard extends React.Component {
     super(props);
     this.state = {
       config: {},
-      data:[],
+      data: [],
       dates: [],
-      count:[]
-    }
+      count: [],
+      primary: '',
+      secondary: '',
+      url: ''
+    };
+
+    this.addToItinerary = this.addToItinerary.bind(this);
+  }
+
+  addToItinerary(name, url) {
+    this.refs.dp.openDialog();
+    this.setState({
+      primary: name,
+      url: url
+    });
   }
 
   render() {
     if (this.props.events) {
-      var events = Object.entries(this.props.events)
+      var events = Object.entries(this.props.events);
     }
+    
     const styles = {
       card: {
         width: '100%',
@@ -50,7 +65,8 @@ class EventListCard extends React.Component {
       chart: {
         width: '80%'
       }
-    }
+    };
+
     return (
       <div>
         <Card
@@ -74,19 +90,29 @@ class EventListCard extends React.Component {
                 title={event[1].description}
                 cols = {2}
                 rows = {2}
-                actionIcon={<IconButton><StarBorder color="white" /></IconButton>}
-
+                actionIcon={
+                  <IconButton onTouchTap={() => { this.addToItinerary(event[1].description, event[1].img); }}>
+                    <StarBorder color="white" />
+                  </IconButton>
+                }
               >
                 <a target="_blank" href={event[1].url}>
                 <img src = {event[1].img} />
                 </a>
+                <DatePicker
+                  ref="dp"
+                  onChange={(nullVal, date) => {
+                    let context = this;
+                    this.props.submitToItinerary(date, context.state.primary, context.state.secondary, context.state.url);
+                  }}
+                />
               </GridTile>
             ))}
           </GridList>
 
         </Card>
       </div>
-    )
+    );
   }
 }
 

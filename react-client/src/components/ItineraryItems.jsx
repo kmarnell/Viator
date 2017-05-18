@@ -9,7 +9,8 @@ import {
 
 const styles = {
   sight: {
-    backgroundColor: blueGrey500
+    backgroundColor: blueGrey500,
+    top: 'calc(50% - 20px)',
   }
 };
 
