@@ -24,9 +24,7 @@ import Delete from 'material-ui/svg-icons/action/delete';
 import Dialog from 'material-ui/Dialog';
 import { SpeedDial, SpeedDialItem } from 'react-mui-speeddial';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
-import FlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff'
-
-
+import FlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff';
 
 import {
   BrowserRouter as Router,
@@ -91,6 +89,7 @@ class DashBoard extends React.Component {
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.newFlight = this.newFlight.bind(this);
+    this.sendEmail = this.sendEmail.bind(this);
   }
 
   searchEvents(location) {
@@ -382,6 +381,22 @@ class DashBoard extends React.Component {
     });
   }
 
+  sendEmail() {
+    let context = this;
+    $.ajax({
+      type: 'POST',
+      url: '/email/itinerary',
+      contentType: 'application/json',
+      data: JSON.stringify(context.state.itinerary),
+      success: (data) => {
+        console.log('Successfully sent email post request to server');
+      },
+      error: (error) => {
+        console.log('Failed to send email post request to server', error);
+      }
+    });
+  } 
+
   componentDidMount() {
     this.databaseFlightSearch();
   }
@@ -503,7 +518,7 @@ class DashBoard extends React.Component {
                 title="Trip Itinerary"
                 titleStyle={styles.appBarTitle}
                 iconElementLeft={<IconButton><ExitToApp style={{fill: white}} /></IconButton>}
-                iconElementRight={<FlatButton label="Send via Email" />}
+                iconElementRight={<FlatButton label="Send via Email" onTouchTap={this.sendEmail} />}
                 onLeftIconButtonTouchTap={this.exitToApp}
                 iconStyleLeft={styles.itineraryIcon}
                 iconStyleRight={styles.itineraryIcon}

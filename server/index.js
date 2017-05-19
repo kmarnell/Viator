@@ -397,6 +397,12 @@ app.get('/database/getItinerary', (req, res) => {
   });
 });
 
+// SEND ITINERARY VIA EMAIL
+app.post('/email/itinerary', (req, res) => {
+  console.log('GOT THE REQUEST!')
+  res.send();
+});
+
 app.get('/flightDuration', (req, res) => {
   request.get(`https://api.flightstats.com/flex/flightstatus/rest/v2/json/flight/status/${req.query.airline}/${req.query.flight}/arr/${req.query.year}/${req.query.day}/${req.query.month}?appId=${FLIGHT_API_KEY}&appKey=${FLIGHT_APP_KEY}&utc=false`,
   (error, response, body) => {
