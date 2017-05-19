@@ -56,7 +56,7 @@ class DashBoard extends React.Component {
       sights: [],
       events: [],
       flight: {},
-      returnFlight : {},
+      returnFlight: {},
       flightsArray: [],
       index: 0,
       weather: [],
@@ -95,8 +95,8 @@ class DashBoard extends React.Component {
     .done((data) => {
       this.setState({
         sights: data
-      })
-    })
+      });
+    });
   }
 
 
@@ -110,7 +110,7 @@ class DashBoard extends React.Component {
     })
     .done(function(data) {
       context.setState({
-        flightsArray:data,
+        flightsArray: data,
         location: data[0].destination
 
       })
@@ -127,7 +127,9 @@ class DashBoard extends React.Component {
       })
     .fail(function(err) {
       console.log('failed to GET', err);
-    })
+    });
+
+
   }
 
   flightSearch(airline, flight, month, day, year, flightType) {
@@ -320,7 +322,46 @@ class DashBoard extends React.Component {
     });    
   }
 
+  databaseItinerarySearch() {
+    var context = this;
+    console.log('INITIAL FLIGHT', context.state.flight);
+
+    $.get('/database/getItinerary', {
+      airline: context.state.flight.airline,
+      flightNumber: context.state.flight.flightNumber,
+    })
+    .done((data) => {
+      console.log('Successfully received itinerary data');
+      console.log('DATAAA', data);
+      let newItinerary = {};
+      
+      data.forEach((item) => {
+        let newItem = {
+          primary: item.primary,
+          secondary: item.secondary,
+          url: item.url,
+          type: item.type
+        };
+        
+        if (newItinerary[item.date]) {
+          newItinerary[item.date].push(newItem);  
+        } else {
+          newItinerary[item.date] = [newItem];
+        }
+      });
+
+      context.setState({
+        itinerary: newItinerary
+      });
+    })
+    .fail((err) => {
+      console.log('failed to receive itinerary data');
+    });
+  }
+
   toggleItinerary() {
+    this.databaseItinerarySearch();
+
     this.setState({
       drawerOpen: !this.state.drawerOpen
     });
@@ -332,7 +373,6 @@ class DashBoard extends React.Component {
     });
   }
 
-
   componentDidMount() {
     this.databaseFlightSearch();
   }
@@ -343,9 +383,9 @@ class DashBoard extends React.Component {
     const styles = {
       gridList: {
         width: 'auto',
-        overflowX:'hidden',
+        overflowX: 'hidden',
         height: 'auto',
-        overflowY:'visible',
+        overflowY: 'visible',
         marginLeft: 20,
         marginRight: 20,
       },
@@ -383,8 +423,9 @@ class DashBoard extends React.Component {
         position: 'relative',
         bottom: 3
       }
-    }
-    return(
+    };
+
+    return (
       <div>
         <SignOutToolBar/>
         <div
@@ -410,7 +451,6 @@ class DashBoard extends React.Component {
               <MuiThemeProvider><FoodCard food={this.state.food} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><EventListCard events={this.state.events} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
-
             </GridList>
           </MuiThemeProvider>
           <MuiThemeProvider>

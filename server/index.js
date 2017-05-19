@@ -335,9 +335,24 @@ app.get('/database/return', (req,res) => {
       result = result.reverse();
       res.json(result);
     }
-  })
+  });
+});
 
-})
+// RETURNS ITINERARY FOR A TRIP
+app.get('/database/getItinerary', (req, res) => {
+  db.Itinerary.find({
+    user: userId,
+    airline: req.query.airline,
+    flightNumber: req.query.flightNumber
+  })
+  .exec((err, result) => {
+    if (err) {
+      console.log('Failed to read itinerary data', errr);
+    } else {
+      res.json(result);
+    }
+  });
+});
 
 app.get('/flightDuration', (req, res) => {
   request.get(`https://api.flightstats.com/flex/flightstatus/rest/v2/json/flight/status/${req.query.airline}/${req.query.flight}/arr/${req.query.year}/${req.query.day}/${req.query.month}?appId=${FLIGHT_API_KEY}&appKey=${FLIGHT_APP_KEY}&utc=false`,
