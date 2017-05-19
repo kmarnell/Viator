@@ -30,7 +30,6 @@ var userIdCheck = false;
 var checkUser = () => {
   db.User.find({user: userId}).exec((err,result) => {
     if(err) {
-      console.log('Get did not return data');
     } else {
       if (typeof result[0] === 'object') {
         userIdCheck = true;
@@ -39,18 +38,18 @@ var checkUser = () => {
       }
     }
   });
-}
+};
 
 
 // Passport/Auth
 passport.use(new GoogleStrategy({
-    clientID: G_ID,
-    clientSecret: G_SECRET,
-    callbackURL: G_URL
-  },
+  clientID: G_ID,
+  clientSecret: G_SECRET,
+  callbackURL: G_URL
+},
   (accessToken, refreshToken, profile, done) => {
-      userId = profile.id;
-      checkUser();
+    userId = profile.id;
+    checkUser();
     db.User.findOrCreate({ googleId: profile.id }, (err, user) => {
       return done(err, user);
     });
@@ -79,15 +78,15 @@ app.get('/', (req, res) => {
 
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, '/../react-client/dist/index.html'));
-})
+});
 
 app.get('/sign-in', (req, res) => {
   res.sendFile(path.join(__dirname, '/../react-client/dist/index.html'));
-})
+});
 
 app.get('/trip', (req, res) => {
   res.sendFile(path.join(__dirname, '/../react-client/dist/index.html'));
-})
+});
 
 // Auth routes
 app.get('/auth/google',
@@ -112,10 +111,10 @@ app.get('/geoCoord', (req, res) => {
       if (error) {
         console.error(err);
       }
-      geoCoord = JSON.parse(body).results[0].geometry['location']
+      geoCoord = JSON.parse(body).results[0].geometry['location'];
       res.send(JSON.stringify(geoCoord));
     });
-})
+});
 
 
 app.get('/weather', (req, res) => {
@@ -123,7 +122,9 @@ app.get('/weather', (req, res) => {
   const getCoords = new Promise((resolve, reject) => {
     request.get(`https://maps.googleapis.com/maps/api/geocode/json?key=${GOOGLE_KEY}&address=${req.query.location || 'San Francisco'}`,
     (error, response, body) => {
-      if (error) console.error(error);
+      if (error) {
+        console.error(error);
+      }
       resolve(JSON.parse(body).results[0].geometry.location);
     });
   });
@@ -131,39 +132,43 @@ app.get('/weather', (req, res) => {
     // Use coordinates to get weather forecast
     request.get(`https://api.darksky.net/forecast/${DARK_SKY_KEY}/${coords.lat},${coords.lng}?exclude=[minutely,hourly]`,
     (error, response, body) => {
-      if (error) console.error(error);
+      if (error) {
+        console.error(error);
+      }
       res.send(JSON.parse(body).daily.data);
     });
   });
 });
 
 app.get('/events', (req, res) => {
-  var location = req.query.location
+  var location = req.query.location;
   request.get(`https://www.eventbriteapi.com/v3/events/search/?token=UHLKIOWHWZNIOUNFTLKN&sort_by=distance&location.address=${location}&categories=109%2C133%2C110&location.within=10mi&start_date.keyword=this_week`, (error, response, body) => {
-    if (error) console.error(error);
-    body = JSON.parse(body);
-    var events = body.events
-    var eventData = {}
-    dataLength = 10
-    currentIndex = 0
-    validData = true
-    while(dataLength > 0 && validData) {
-      var eventObj = {}
-      eventObj["description"] = events[currentIndex].name.text
-      eventObj["url"] = events[currentIndex].url
-      if (events[currentIndex].logo) {
-        eventObj["img"] = events[currentIndex].logo.url
-        eventData[currentIndex] = eventObj
-        dataLength--
-     }
-     if (!events[currentIndex + 1]) {
-       validData = false
-     }
-     currentIndex++
+    if (error) {
+      console.error(error);
     }
-    res.send(eventData)
-  })
-})
+    body = JSON.parse(body);
+    var events = body.events;
+    var eventData = {};
+    dataLength = 10;
+    currentIndex = 0;
+    validData = true;
+    while (dataLength > 0 && validData) {
+      var eventObj = {};
+      eventObj['description'] = events[currentIndex].name.text;
+      eventObj['url'] = events[currentIndex].url;
+      if (events[currentIndex].logo) {
+        eventObj['img'] = events[currentIndex].logo.url;
+        eventData[currentIndex] = eventObj;
+        dataLength--;
+      }
+      if (!events[currentIndex + 1]) {
+        validData = false;
+      }
+      currentIndex++;
+    }
+    res.send(eventData);
+  });
+});
 
 app.get('/sights', (req, res) => {
   let params = {
@@ -172,7 +177,9 @@ app.get('/sights', (req, res) => {
   // Call Places API to get array of sights
   const getSights = new Promise((resolve, reject) => {
     place.textSearch(params, (err, res) => {
-      if (err) console.error(err);
+      if (err) {
+        console.error(err);
+      }
       resolve(res.results);
     });
   });
@@ -181,7 +188,9 @@ app.get('/sights', (req, res) => {
     let promiseArr = sights.map((sight) => {
       return new Promise((resolve, reject) => {
         place.placeDetailsRequest({ placeid: sight.place_id }, (err, res) => {
-          if (err) console.error(err);
+          if (err) {
+            console.error(err);
+          }
           sight.url = res.result.url;
           if ( sight.photos ) {
             sight.img = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=' + sight.photos[0].photo_reference + '&key=' + GOOGLE_KEY;
@@ -207,7 +216,9 @@ app.get('/food', (req, res) => {
   // Call Places API to get array of restaurants
   const getRestaurants = new Promise((resolve, reject) => {
     place.textSearch(params, (err, res) => {
-      if (err) console.error(err);
+      if (err) {
+        console.error(err);
+      }
       resolve(res.results);
     });
   });
@@ -216,7 +227,9 @@ app.get('/food', (req, res) => {
     promiseArr = restaurants.map((restaurant) => {
       return new Promise((resolve, reject) => {
         place.placeDetailsRequest({ placeid: restaurant.place_id }, (err, res) => {
-          if (err) console.error(err);
+          if (err) {
+            console.error(err);
+          }
           restaurant.url = res.result.url;
           if ( restaurant.photos ) {
             restaurant.photo = `https://maps.googleapis.com/maps/api/place/photo?maxheight=100&photoreference=${restaurant.photos[0].photo_reference}&key=${GOOGLE_KEY}`;
@@ -237,10 +250,12 @@ app.get('/food', (req, res) => {
 app.get('/flightStatus', (req, res) => {
   request.get(`https://api.flightstats.com/flex/flightstatus/rest/v2/json/flight/status/${req.query.airline}/${req.query.flight}/arr/${req.query.year}/${req.query.day}/${req.query.month}?appId=${FLIGHT_API_KEY}&appKey=${FLIGHT_APP_KEY}&utc=false`,
   (error, response, body) => {
-    if (error) console.error(error);
+    if (error) {
+      console.error(error);
+    }
     res.send(JSON.parse(body));
   });
-})
+});
 
 // FOR ADDING DATA INTO THE DATEBASE
 
@@ -252,54 +267,79 @@ app.post('/database/save', (req, res) => {
       var returnDayOnly = undefined;
       var returnYearOnly = undefined;
       var returnFlightNumber = undefined;
+    } else {
+
+      var returnDateTotal = req.body.returnDate;
+      var returnMonthOnly;
+      var returnDayOnly;
+      var returnYearOnly;
+
+      returnYearOnly = returnDateTotal.slice(0, 4);
+      returnDayOnly = Number(returnDateTotal.slice(5, 7)).toString();
+      returnMonthOnly = Number(returnDateTotal.slice(8, 10)).toString();
+      returnFlightNumber = req.body.returnFlightNumber;
     }
+  var dateTotal = req.body.date;
+  var monthOnly;
+  var dayOnly;
+  var yearOnly;
 
-    else {
-
-    var returnDateTotal = req.body.returnDate;
-    var returnMonthOnly;
-    var returnDayOnly;
-    var returnYearOnly;
-
-    returnYearOnly = returnDateTotal.slice(0,4);
-    returnDayOnly = Number(returnDateTotal.slice(5,7)).toString();
-    returnMonthOnly = Number(returnDateTotal.slice(8,10)).toString();
-    returnFlightNumber = req.body.returnFlightNumber
-  }
-    var dateTotal = req.body.date;
-    var monthOnly;
-    var dayOnly;
-    var yearOnly;
-
-    yearOnly = dateTotal.slice(0,4);
-    dayOnly = Number(dateTotal.slice(5,7)).toString();
-    monthOnly = Number(dateTotal.slice(8,10)).toString();
-    userId = userId.toString();
+  yearOnly = dateTotal.slice(0, 4);
+  dayOnly = Number(dateTotal.slice(5, 7)).toString();
+  monthOnly = Number(dateTotal.slice(8, 10)).toString();
+  userId = userId.toString();
 
 
-    const addNew = new db.User({
-      user: userId,
-      month: monthOnly,
-      day: dayOnly,
-      year: yearOnly,
-      Airline: req.body.airline,
-      flight: req.body.flightNumber,
-      destination: req.body.finalDestination,
-      returnFlight: returnFlightNumber,
-      returnMonth: returnMonthOnly,
-      returnDay: returnDayOnly,
-      returnMonth: returnMonthOnly
+  const addNew = new db.User({
+    user: userId,
+    month: monthOnly,
+    day: dayOnly,
+    year: yearOnly,
+    Airline: req.body.airline,
+    flight: req.body.flightNumber,
+    destination: req.body.finalDestination,
+    returnFlight: returnFlightNumber,
+    returnMonth: returnMonthOnly,
+    returnDay: returnDayOnly,
+    returnMonth: returnMonthOnly
 
-    })
+  });
 
-    addNew.save((err,result) => {
-      if (err) {
-        console.log('did not save');
-      } else {
-        console.log('history saved', result);
-      }
-    })
-    res.end();
+  addNew.save((err, result) => {
+    if (err) {
+      console.log('did not save');
+    } else {
+      console.log('history saved', result);
+    }
+  });
+  res.end();
+});
+
+
+
+
+app.post('/database/itinerary', (req, res) => {
+  const body = req.body;
+
+  const addNew = new db.Itinerary({
+    user: userId,
+    airline: body.airline,
+    flightNumber: body.flightNumber,
+    date: body.date,
+    primary: body.primary,
+    secondary: body.secondary,
+    url: body.url,
+    type: body.type
+  });
+
+  addNew.save((err, result) => {
+    if (err) {
+      console.log('error saving itinerary in database.');
+    } else {
+      console.log('itinerary saved in database!', result);
+    }
+  });
+  res.end();
 });
 
 app.post('/database/itinerary', (req, res) => {
@@ -330,7 +370,6 @@ app.post('/database/itinerary', (req, res) => {
 app.get('/database/return', (req,res) => {
   db.User.find({user: userId}).limit(10).exec((err,result) => {
     if(err) {
-      console.log('Get did not return data');
     } else {
       result = result.reverse();
       res.json(result);
@@ -357,10 +396,12 @@ app.get('/database/getItinerary', (req, res) => {
 app.get('/flightDuration', (req, res) => {
   request.get(`https://api.flightstats.com/flex/flightstatus/rest/v2/json/flight/status/${req.query.airline}/${req.query.flight}/arr/${req.query.year}/${req.query.day}/${req.query.month}?appId=${FLIGHT_API_KEY}&appKey=${FLIGHT_APP_KEY}&utc=false`,
   (error, response, body) => {
-    if (error) console.error(error);
+    if (error) {
+      console.error(error);
+    }
     res.send(JSON.parse(body));
   });
-})
+});
 
 
 const port = process.env.PORT || 1337;

@@ -40,18 +40,18 @@ import MenuItem from 'material-ui/MenuItem';
 
 
 const months = {
-  0: 'aJanuary',
-  1: 'bFebruary',
-  2: 'cMarch',
-  3: 'dApril',
-  4: 'eMay',
-  5: 'fJune',
-  6: 'gJuly',
-  7: 'hAugust',
-  8: 'iSeptember',
-  9: 'jOctober',
-  10: 'kNovember',
-  11: 'lDecember'
+  0: 'January',
+  1: 'February',
+  2: 'March',
+  3: 'April',
+  4: 'May',
+  5: 'June',
+  6: 'July',
+  7: 'August',
+  8: 'September',
+  9: 'October',
+  10: 'November',
+  11: 'December'
 };
 
 class DashBoard extends React.Component {
@@ -71,7 +71,7 @@ class DashBoard extends React.Component {
       drawerOpen: false,
       returnFlightStatus: false,
       alertIsOpen: false
-    }
+    };
     this.searchGoogle = this.searchGoogle.bind(this);
     this.flightSearch = this.flightSearch.bind(this);
     this.databaseFlightSearch = this.databaseFlightSearch.bind(this);
@@ -94,8 +94,8 @@ class DashBoard extends React.Component {
     .done((data) => {
       this.setState({
         events: data
-      })
-    })
+      });
+    });
   }
 
  handleOpen() {
@@ -131,18 +131,18 @@ class DashBoard extends React.Component {
         flightsArray: data,
         location: data[0].destination
 
-      })
-      context.flightSearch(data[0].Airline,data[0].flight,data[0].month,data[0].day,data[0].year, "flight");
+      });
+      context.flightSearch(data[0].Airline, data[0].flight, data[0].month, data[0].day, data[0].year, 'flight');
       if (data[0].returnFlight) {
-        context.flightSearch(data[0].Airline,data[0].returnFlight,data[0].returnMonth,data[0].returnDay,data[0].year, "returnFlight")
-        context.setState({returnFlightStatus: true})
+        context.flightSearch(data[0].Airline, data[0].returnFlight, data[0].returnMonth, data[0].returnDay, data[0].year, 'returnFlight');
+        context.setState({returnFlightStatus: true});
       }
       context.searchGoogle(data[0].destination);
       context.searchFood(data[0].destination);
       context.searchWeather(data[0].destination);
       context.searchEvents(data[0].destination);
       console.log('success GET', data);
-      })
+    })
     .fail(function(err) {
       console.log('failed to GET', err);
     });
@@ -159,10 +159,9 @@ class DashBoard extends React.Component {
       year: year
     })
     .done((data) => {
-      if (flightType === "flight") {
-        console.log('departure data', data)
-      }
-      else if (flightType === "returnFlight") {
+      if (flightType === 'flight') {
+        console.log('departure data', data);
+      } else if (flightType === 'returnFlight') {
         console.log('return data', data);
       }
       var dateTime = data.flightStatuses[0].departureDate.dateLocal;
@@ -173,17 +172,17 @@ class DashBoard extends React.Component {
       var count = 0;
       for (var i = 0; i < dateTime.length; i++) {
         if (dateTime[i] === 'T') {
-          dateOnly = dateTime.slice(0,i);
-          newTime =dateTime.slice(i+1,dateTime.length);
+          dateOnly = dateTime.slice(0, i);
+          newTime = dateTime.slice(i + 1, dateTime.length);
         }
       }
-      hours = newTime.slice(0,2);
-      minutes = newTime.slice(3,5);
+      hours = newTime.slice(0, 2);
+      minutes = newTime.slice(3, 5);
       hours = Number(hours);
       if (hours > 12) {
-        newTime = (Math.floor(hours - 12)).toString()+ ':' + minutes + ' PM'
+        newTime = (Math.floor(hours - 12)).toString() + ':' + minutes + ' PM';
       } else {
-        newTime = hours.toString() + ':'+ minutes + ' AM'
+        newTime = hours.toString() + ':' + minutes + ' AM';
       }
 
       var flightDuration = data.flightStatuses[0].flightDurations.scheduledBlockMinutes;
@@ -194,19 +193,17 @@ class DashBoard extends React.Component {
       } else if (flightDuration <= 60) {
         flightDuration = flightDuration + ' Minute(s)';
       }
-      dateOnly = dateOnly[5] === '0' ? (dateOnly.slice(6,7) + '/' + dateOnly.slice(8,10) + '/' + dateOnly.slice(0,4)) : (dateOnly.slice(5,7) + '/' + dateOnly.slice(8,10) + '/' + dateOnly.slice(0,4));
+      dateOnly = dateOnly[5] === '0' ? (dateOnly.slice(6, 7) + '/' + dateOnly.slice(8, 10) + '/' + dateOnly.slice(0, 4)) : (dateOnly.slice(5, 7) + '/' + dateOnly.slice(8, 10) + '/' + dateOnly.slice(0, 4));
       var departure;
       var arrival;
       if (data.flightStatuses[0].arrivalAirportFsCode === data.appendix.airports[0].faa) {
         arrival = data.appendix.airports[0].city + ', ' + data.appendix.airports[0].stateCode
-      }
-      else {
+      } else {
         arrival = data.appendix.airports[1].city + ', ' + data.appendix.airports[1].stateCode
       }
       if (data.flightStatuses[0].departureAirportFsCode === data.appendix.airports[0].faa) {
         departure = data.appendix.airports[0].city + ', ' + data.appendix.airports[0].stateCode
-      }
-      else {
+      } else {
         departure = data.appendix.airports[1].city + ', ' + data.appendix.airports[1].stateCode
       }
       var obj = {
@@ -220,17 +217,16 @@ class DashBoard extends React.Component {
         leaveDate: dateOnly,
         flightNumber: flight,
       };
-      if (flightType === "flight") {
-        console.log("FLIGHT OBJ", obj)
+      if (flightType === 'flight') {
+        console.log('FLIGHT OBJ', obj);
         this.setState({
           flight: obj
         });
-      }
-      else if (flightType === "returnFlight") {
-        console.log("RETURN FLIGHT", obj)
+      } else if (flightType === 'returnFlight') {
+        console.log('RETURN FLIGHT', obj);
         this.setState({
           returnFlight: obj
-        })
+        });
       }
     });
   }
@@ -241,13 +237,12 @@ class DashBoard extends React.Component {
     }, function() {
       var flight = this.state.flightsArray[index];
       if (!flight.returnFlight) {
-        this.setState({returnFlightStatus: false})
-        this.flightSearch(flight.Airline,flight.flight,flight.month,flight.day,flight.year, "flight");
-      }
-      else {
-        this.setState({returnFlightStatus: true})
-        this.flightSearch(flight.Airline,flight.flight,flight.month,flight.day,flight.year, "flight");
-        this.flightSearch(flight.Airline,flight.returnFlight,flight.returnMonth,flight.returnDay,flight.year, "returnFlight");
+        this.setState({returnFlightStatus: false});
+        this.flightSearch(flight.Airline, flight.flight, flight.month, flight.day, flight.year, 'flight');
+      } else {
+        this.setState({returnFlightStatus: true});
+        this.flightSearch(flight.Airline, flight.flight, flight.month, flight.day, flight.year, 'flight');
+        this.flightSearch(flight.Airline, flight.returnFlight, flight.returnMonth, flight.returnDay, flight.year, 'returnFlight');
       }
       this.searchGoogle(flight.destination);
       this.searchFood(flight.destination);
@@ -266,8 +261,8 @@ class DashBoard extends React.Component {
       this.setState({
         food: data,
         location: location
-      })
-    })
+      });
+    });
   }
 
   searchWeather(location) {
@@ -284,40 +279,6 @@ class DashBoard extends React.Component {
 
   submitToItinerary(date, primary, secondary, url, type) {
     let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
-
-    // if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
-    //   let newItem = {
-    //     primary: primary,
-    //     secondary: secondary,
-    //     url: url,
-    //     type: type
-    //   };
-    //   let itineraryItems = this.state.itinerary[itineraryKey];
-    //   itineraryItems.push(newItem);
-
-    //   let newDateItem = {};
-    //   newDateItem[itineraryKey] = itineraryItems;
-
-    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
-
-    //   this.setState({
-    //     itinerary: newItineraryObj
-    //   });
-
-    // } else {
-    //   let newItem = {};
-    //   newItem[itineraryKey] = [{
-    //     primary: primary,
-    //     secondary: secondary,
-    //     url: url,
-    //     type: type
-    //   }];
-    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
-
-    //   this.setState({
-    //     itinerary: newItineraryObj
-    //   });
-    // }
 
     let context = this;
     $.ajax({
@@ -342,9 +303,9 @@ class DashBoard extends React.Component {
     });
   }
 
+
   databaseItinerarySearch() {
     var context = this;
-    console.log('INITIAL FLIGHT', context.state.flight);
 
     $.get('/database/getItinerary', {
       airline: context.state.flight.airline,
@@ -352,7 +313,6 @@ class DashBoard extends React.Component {
     })
     .done((data) => {
       console.log('Successfully received itinerary data');
-      console.log('DATAAA', data);
       let newItinerary = {};
 
       data.forEach((item) => {
@@ -492,7 +452,7 @@ class DashBoard extends React.Component {
               onChange={this.historyChange}
               value={this.state.index}>
               {this.state.flightsArray.map((index, ind) => {
-                return <MenuItem key={ind} value={ind} label={index.Airline + ' ' +index.flight} primaryText={index.Airline + ' ' +index.flight} />
+                return <MenuItem key={ind} value={ind} label={index.Airline + ' ' + index.flight} primaryText={index.Airline + ' ' + index.flight} />;
               })}
             </SelectField>
 
@@ -502,7 +462,7 @@ class DashBoard extends React.Component {
               padding = {25}>
               <MuiThemeProvider><WeatherCard weather={this.state.weather} location={this.state.location}/></MuiThemeProvider>
               <MuiThemeProvider><FlightCard returnFlightStatus = {this.state.returnFlightStatus} returnFlight = {this.state.returnFlight} flight={this.state.flight}/></MuiThemeProvider>
-              <MuiThemeProvider><NavigationCard  destination={this.state.location} arrivalPort={this.state.flight.arrivalPort} /></MuiThemeProvider>
+              <MuiThemeProvider><NavigationCard destination={this.state.location} arrivalPort={this.state.flight.arrivalPort} /></MuiThemeProvider>
               <MuiThemeProvider><FoodCard food={this.state.food} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><EventListCard events={this.state.events} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
@@ -548,6 +508,7 @@ class DashBoard extends React.Component {
             </FloatingActionButton>
         </div>
       </div>
+
       </MuiThemeProvider>
     )
   }
