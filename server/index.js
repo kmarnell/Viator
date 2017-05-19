@@ -28,9 +28,8 @@ var userId;
 // check if user has saved data
 var userIdCheck = false;
 var checkUser = () => {
-  db.User.find({user: userId}).exec((err, result) => {
-    if (err) {
-      console.log('Get did not return data');
+  db.User.find({user: userId}).exec((err,result) => {
+    if(err) {
     } else {
       if (typeof result[0] === 'object') {
         userIdCheck = true;
@@ -316,6 +315,33 @@ app.post('/database/save', (req, res) => {
   res.end();
 });
 
+
+
+
+app.post('/database/itinerary', (req, res) => {
+  const body = req.body;
+
+  const addNew = new db.Itinerary({
+    user: userId,
+    airline: body.airline,
+    flightNumber: body.flightNumber,
+    date: body.date,
+    primary: body.primary,
+    secondary: body.secondary,
+    url: body.url,
+    type: body.type
+  });
+
+  addNew.save((err, result) => {
+    if (err) {
+      console.log('error saving itinerary in database.');
+    } else {
+      console.log('itinerary saved in database!', result);
+    }
+  });
+  res.end();
+});
+
 app.post('/database/itinerary', (req, res) => {
   const body = req.body;
 
@@ -341,10 +367,9 @@ app.post('/database/itinerary', (req, res) => {
 });
 
 // RETURNS LIST OF THE USERS HISTORY
-app.get('/database/return', (req, res) => {
-  db.User.find({user: userId}).limit(10).exec((err, result) => {
-    if (err) {
-      console.log('Get did not return data');
+app.get('/database/return', (req,res) => {
+  db.User.find({user: userId}).limit(10).exec((err,result) => {
+    if(err) {
     } else {
       result = result.reverse();
       res.json(result);

@@ -20,18 +20,24 @@ import IconButton from 'material-ui/IconButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Event from 'material-ui/svg-icons/action/event';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
+import Delete from 'material-ui/svg-icons/action/delete';
+import Dialog from 'material-ui/Dialog';
+
+
 import {
   BrowserRouter as Router,
   Route,
   Link,
 } from 'react-router-dom';
 import {
-  amberA700, tealA700, white
+  amberA700, tealA700, white, redA700
 } from 'material-ui/styles/colors';
 import $ from 'jquery';
 import SignOutToolBar from './SignOutToolBar.jsx';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+
+
 
 const months = {
   0: 'January',
@@ -63,7 +69,8 @@ class DashBoard extends React.Component {
       itinerary: {},
       location: '',
       drawerOpen: false,
-      returnFlightStatus: false
+      returnFlightStatus: false,
+      alertIsOpen: false
     };
     this.searchGoogle = this.searchGoogle.bind(this);
     this.flightSearch = this.flightSearch.bind(this);
@@ -75,6 +82,9 @@ class DashBoard extends React.Component {
     this.submitToItinerary = this.submitToItinerary.bind(this);
     this.toggleItinerary = this.toggleItinerary.bind(this);
     this.exitToApp = this.exitToApp.bind(this);
+    this.deleteCurrent = this.deleteCurrent.bind(this);
+    this.handleOpen = this.handleOpen.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   searchEvents(location) {
@@ -87,6 +97,14 @@ class DashBoard extends React.Component {
       });
     });
   }
+
+ handleOpen() {
+   this.setState({alertIsOpen: true});
+ }
+
+ handleClose() {
+   this.setState({alertIsOpen: false});
+ }
 
   searchGoogle(location) {
     $.get('/sights', {
@@ -261,6 +279,7 @@ class DashBoard extends React.Component {
 
   submitToItinerary(date, primary, secondary, url, type) {
     let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+
     let context = this;
     $.ajax({
       type: 'POST',
@@ -281,8 +300,9 @@ class DashBoard extends React.Component {
       error: (error) => {
         console.log('Error posting itinerary data', error);
       }
-    });    
+    });
   }
+
 
   databaseItinerarySearch() {
     var context = this;
@@ -294,7 +314,7 @@ class DashBoard extends React.Component {
     .done((data) => {
       console.log('Successfully received itinerary data');
       let newItinerary = {};
-      
+
       data.forEach((item) => {
         let newItem = {
           primary: item.primary,
@@ -302,9 +322,9 @@ class DashBoard extends React.Component {
           url: item.url,
           type: item.type
         };
-        
+
         if (newItinerary[item.date]) {
-          newItinerary[item.date].push(newItem);  
+          newItinerary[item.date].push(newItem);
         } else {
           newItinerary[item.date] = [newItem];
         }
@@ -327,6 +347,12 @@ class DashBoard extends React.Component {
     });
   }
 
+  deleteCurrent() {
+    this.handleClose()
+    this.state.flightsArray.splice(this.state.index, 1);
+    this.historyChange(null, 0)
+  }
+
   exitToApp() {
     this.setState({
       drawerOpen: false
@@ -338,6 +364,20 @@ class DashBoard extends React.Component {
   }
 
   render() {
+    console.log('RETURN FLIGHT STATE', this.state.returnFlight)
+    console.log('ORIGINAL FLIGHT STATE', this.state.flight)
+    const actions = [
+          <FlatButton
+            label="Cancel"
+            primary={true}
+            onTouchTap={this.handleClose}
+          />,
+          <FlatButton
+            label="Delete"
+            primary={true}
+            onTouchTap={this.deleteCurrent}
+          />,
+      ];
     const styles = {
       gridList: {
         width: 'auto',
@@ -365,6 +405,15 @@ class DashBoard extends React.Component {
         zIndex: 200,
         position: 'fixed',
       },
+      fab3: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 150,
+        left: 'auto',
+        zIndex: 250,
+        position: 'fixed',
+      },
       hist: {
         top: 50,
         left: 30,
@@ -383,12 +432,21 @@ class DashBoard extends React.Component {
       }
     };
 
+
     return (
+      <MuiThemeProvider>
       <div>
+        <Dialog
+        actions={actions}
+        modal={false}
+        open={this.state.alertIsOpen}
+        onRequestClose={this.handleClose}
+       >
+       Are you sure you want to delete this trip?
+       </Dialog>
         <SignOutToolBar/>
         <div
           style={styles.gridList}>
-          <MuiThemeProvider>
             <SelectField
               floatingLabelText='Trips'
               onChange={this.historyChange}
@@ -397,8 +455,7 @@ class DashBoard extends React.Component {
                 return <MenuItem key={ind} value={ind} label={index.Airline + ' ' + index.flight} primaryText={index.Airline + ' ' + index.flight} />;
               })}
             </SelectField>
-          </MuiThemeProvider>
-          <MuiThemeProvider>
+
             <GridList
               cellHeight={400}
               cols = {3}
@@ -410,8 +467,6 @@ class DashBoard extends React.Component {
               <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><EventListCard events={this.state.events} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
             </GridList>
-          </MuiThemeProvider>
-          <MuiThemeProvider>
             <Drawer
               width={500}
               docked={false}
@@ -428,8 +483,14 @@ class DashBoard extends React.Component {
               />
               <Itinerary itinerary={this.state.itinerary} />
             </Drawer>
-          </MuiThemeProvider>
-          <MuiThemeProvider>
+          <FloatingActionButton
+            style={styles.fab3}
+            backgroundColor = {redA700}
+            label="Delete"
+            onClick = {this.handleOpen}
+            >
+            <Delete />
+          </FloatingActionButton>
             <Link to='/trip'>
               <FloatingActionButton
                 style={styles.fab}
@@ -437,8 +498,6 @@ class DashBoard extends React.Component {
                 label="Search"><ContentAdd />
               </FloatingActionButton>
             </Link>
-          </MuiThemeProvider>
-          <MuiThemeProvider>
             <FloatingActionButton
               style={styles.fab2}
               backgroundColor={tealA700}
@@ -447,10 +506,11 @@ class DashBoard extends React.Component {
             >
               <Event />
             </FloatingActionButton>
-          </MuiThemeProvider>
         </div>
       </div>
-    );
+
+      </MuiThemeProvider>
+    )
   }
 }
 
