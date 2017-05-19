@@ -348,8 +348,24 @@ class DashBoard extends React.Component {
   }
 
   deleteCurrent() {
+    var context = this
     this.handleClose()
     this.state.flightsArray.splice(this.state.index, 1);
+    var flightNum = this.state.flight.flightNumber
+    $.ajax({
+      type: 'POST',
+      url: '/database/deleteTrip',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        flightNumber: context.state.flight.flightNumber,
+      }),
+      success: (data) => {
+        console.log('Successfully deleted travel data');
+      },
+      error: (error) => {
+        console.log('Error deleting travel data', error);
+      }
+    });
     this.historyChange(null, 0)
   }
 

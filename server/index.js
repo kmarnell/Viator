@@ -260,7 +260,6 @@ app.get('/flightStatus', (req, res) => {
 // FOR ADDING DATA INTO THE DATEBASE
 
 app.post('/database/save', (req, res) => {
-  console.log(req.body);
     if (!req.body.returnDate || !req.body.returnFlightNumber) {
       var returnDateTotal = undefined;
       var returnMonthOnly = undefined;
@@ -315,7 +314,11 @@ app.post('/database/save', (req, res) => {
   res.end();
 });
 
-
+app.post('/database/deleteTrip', (req, res) => {
+  const body = req.body
+  db.User.find({flight:body.flightNumber}).remove().exec()
+  res.end();
+})
 
 
 app.post('/database/itinerary', (req, res) => {
