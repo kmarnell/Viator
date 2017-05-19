@@ -296,6 +296,28 @@ class DashBoard extends React.Component {
         itinerary: newItineraryObj
       });
     }
+
+    let context = this;
+    $.ajax({
+      type: 'POST',
+      url: '/database/itinerary',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        airline: context.state.flight.airline,
+        flightNumber: context.state.flight.flightNumber,
+        date: itineraryKey.slice(1),
+        primary: primary,
+        secondary: secondary,
+        url: url,
+        type: type
+      }),
+      success: (data) => {
+        console.log('Successfully posted itinerary data');
+      },
+      error: (error) => {
+        console.log('Error posting itinerary data', error);
+      }
+    });    
   }
 
   toggleItinerary() {

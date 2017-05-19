@@ -16,24 +16,41 @@ db.once('open', () => {
 
 const userSchema = mongoose.Schema({
 
-    user: String,
-    month: String,
-    day: String,
-    year: String,
-    Airline: String,
-    flight: String,
-    destination: String,
-    returnFlight: String,
-    returnMonth: String,
-    returnDay: String,
-    returnMonth: String
+  user: String,
+  month: String,
+  day: String,
+  year: String,
+  Airline: String,
+  flight: String,
+  destination: String,
+  returnFlight: String,
+  returnMonth: String,
+  returnDay: String,
+  returnMonth: String
 
-  });
+});
+
+const itinerarySchema = mongoose.Schema({
+
+  user: String,
+  airline: String,
+  flightNumber: String,
+  date: String,
+  primary: String,
+  secondary: String,
+  url: String,
+  type: String
+
+});
 
 userSchema.plugin(findOrCreate);
 
 
 const historyStorage = mongoose.model('historyStorage', userSchema);
+const itineraryStorage = mongoose.model('itineraryStorage', itinerarySchema);
 
 
-module.exports = historyStorage;
+module.exports = {
+  User: historyStorage,
+  Itinerary: itineraryStorage
+};

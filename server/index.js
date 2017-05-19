@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const User = require('../database/index');
+const db = require('../database/index');
 const app = express();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
@@ -28,7 +28,7 @@ var userId;
 // check if user has saved data
 var userIdCheck = false;
 var checkUser = () => {
-  User.find({user: userId}).exec((err,result) => {
+  db.User.find({user: userId}).exec((err,result) => {
     if(err) {
       console.log('Get did not return data');
     } else {
@@ -51,7 +51,7 @@ passport.use(new GoogleStrategy({
   (accessToken, refreshToken, profile, done) => {
       userId = profile.id;
       checkUser();
-    User.findOrCreate({ googleId: profile.id }, (err, user) => {
+    db.User.findOrCreate({ googleId: profile.id }, (err, user) => {
       return done(err, user);
     });
   }
@@ -60,7 +60,7 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
+  db.User.findById(id, (err, user) => {
     done(err, user);
   });
 });
@@ -277,7 +277,7 @@ app.post('/database/save', (req, res) => {
     userId = userId.toString();
 
 
-    const addNew = new User({
+    const addNew = new db.User({
       user: userId,
       month: monthOnly,
       day: dayOnly,
@@ -302,9 +302,33 @@ app.post('/database/save', (req, res) => {
     res.end();
 });
 
+app.post('/database/itinerary', (req, res) => {
+  const body = req.body;
+
+  const addNew = new db.Itinerary({
+    user: userId,
+    airline: body.airline,
+    flightNumber: body.flightNumber,
+    date: body.date,
+    primary: body.primary,
+    secondary: body.secondary,
+    url: body.url,
+    type: body.type
+  });
+
+  addNew.save((err, result) => {
+    if (err) {
+      console.log('error saving itinerary in database.');
+    } else {
+      console.log('itinerary saved in database!', result);
+    }
+  });
+  res.end();
+});
+
 // RETURNS LIST OF THE USERS HISTORY
 app.get('/database/return', (req,res) => {
-  User.find({user: userId}).limit(10).exec((err,result) => {
+  db.User.find({user: userId}).limit(10).exec((err,result) => {
     if(err) {
       console.log('Get did not return data');
     } else {
