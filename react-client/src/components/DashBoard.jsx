@@ -35,7 +35,7 @@ import {
   Redirect
 } from 'react-router-dom';
 import {
-  amberA700, tealA700, white, redA700
+  amberA700, tealA700, white, redA700, cyan600
 } from 'material-ui/styles/colors';
 import $ from 'jquery';
 import SignOutToolBar from './SignOutToolBar.jsx';
@@ -442,7 +442,7 @@ class DashBoard extends React.Component {
         zIndex: 100,
         position: 'fixed',
       },
-      exitToApp: {
+      itineraryIcon: {
         position: 'relative',
         bottom: 3
       },
@@ -502,8 +502,11 @@ class DashBoard extends React.Component {
               <AppBar
                 title="Trip Itinerary"
                 titleStyle={styles.appBarTitle}
-                iconElementLeft={<IconButton style={styles.exitToApp}><ExitToApp style={{fill: white}} /></IconButton>}
+                iconElementLeft={<IconButton><ExitToApp style={{fill: white}} /></IconButton>}
+                iconElementRight={<FlatButton label="Send via Email" />}
                 onLeftIconButtonTouchTap={this.exitToApp}
+                iconStyleLeft={styles.itineraryIcon}
+                iconStyleRight={styles.itineraryIcon}
                 style={{height: 56}}
               />
               <Itinerary itinerary={this.state.itinerary} />
