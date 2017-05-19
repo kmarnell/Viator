@@ -3,6 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const Mailgun = require('mailgun-js');
 const db = require('../database/index');
 const app = express();
 const passport = require('passport');
@@ -19,10 +20,13 @@ const GOOGLE_KEY = process.env.GOOGLE_KEY || require('./config').GOOGLE_KEY;
 const DARK_SKY_KEY = process.env.DARK_SKY_KEY || require('./config').DARK_SKY_KEY;
 const FLIGHT_API_KEY = process.env.FLIGHT_API_KEY || require('./config').FLIGHT_API_KEY;
 const FLIGHT_APP_KEY = process.env.FLIGHT_APP_KEY || require('./config').FLIGHT_APP_KEY;
+const MAILGUN_API_KEY = process.env.FLIGHT_APP_KEY || require('./config').MAILGUN_API_KEY;
 
 const place = new GooglePlaces(GOOGLE_KEY, 'json');
 
 app.use(express.static(__dirname + '/../react-client/dist'));
+
+app.set('view engine', 'jade');
 
 var userId;
 // check if user has saved data
@@ -399,8 +403,26 @@ app.get('/database/getItinerary', (req, res) => {
 
 // SEND ITINERARY VIA EMAIL
 app.post('/email/itinerary', (req, res) => {
-  console.log('GOT THE REQUEST!')
-  res.send();
+  console.log('GOT THE REQUEST!', req.body)
+  const domain = 'sandbox8fcad1c0396a4afca4bedbd94469371f.mailgun.org';
+  let mailgun = new Mailgun({apiKey: MAILGUN_API_KEY, domain: domain});
+
+  let data = {
+    from: 'cjkim0119@gmail.com',
+    to: 'cjkim0119@gmail.com',
+    subject: 'TEST FROM CHARLES',
+    html: 'HELLO, I\'m currently using Mailgun and testing its functionality'
+  };
+
+  mailgun.messages().send(data, function(err, body) {
+    if (err) {
+      res.render('error', {error: err});
+      console.log('error sending an email', err);
+    } else {
+      res.send();
+      console.log('successfully sent email');
+    }
+  });
 });
 
 app.get('/flightDuration', (req, res) => {
