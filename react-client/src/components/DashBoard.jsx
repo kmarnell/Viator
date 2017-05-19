@@ -236,6 +236,8 @@ class DashBoard extends React.Component {
       this.searchWeather(flight.destination);
       this.searchEvents(flight.destination);
     });
+
+    this.databaseItinerarySearch();
   }
 
   searchFood(location) {
@@ -265,39 +267,39 @@ class DashBoard extends React.Component {
   submitToItinerary(date, primary, secondary, url, type) {
     let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
-    if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
-      let newItem = {
-        primary: primary,
-        secondary: secondary,
-        url: url,
-        type: type
-      };
-      let itineraryItems = this.state.itinerary[itineraryKey];
-      itineraryItems.push(newItem);
+    // if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
+    //   let newItem = {
+    //     primary: primary,
+    //     secondary: secondary,
+    //     url: url,
+    //     type: type
+    //   };
+    //   let itineraryItems = this.state.itinerary[itineraryKey];
+    //   itineraryItems.push(newItem);
 
-      let newDateItem = {};
-      newDateItem[itineraryKey] = itineraryItems;
+    //   let newDateItem = {};
+    //   newDateItem[itineraryKey] = itineraryItems;
 
-      let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
+    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
 
-      this.setState({
-        itinerary: newItineraryObj
-      });
+    //   this.setState({
+    //     itinerary: newItineraryObj
+    //   });
 
-    } else {
-      let newItem = {};
-      newItem[itineraryKey] = [{
-        primary: primary,
-        secondary: secondary,
-        url: url,
-        type: type
-      }];
-      let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
+    // } else {
+    //   let newItem = {};
+    //   newItem[itineraryKey] = [{
+    //     primary: primary,
+    //     secondary: secondary,
+    //     url: url,
+    //     type: type
+    //   }];
+    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
 
-      this.setState({
-        itinerary: newItineraryObj
-      });
-    }
+    //   this.setState({
+    //     itinerary: newItineraryObj
+    //   });
+    // }
 
     let context = this;
     $.ajax({
@@ -307,7 +309,7 @@ class DashBoard extends React.Component {
       data: JSON.stringify({
         airline: context.state.flight.airline,
         flightNumber: context.state.flight.flightNumber,
-        date: itineraryKey.slice(1),
+        date: itineraryKey,
         primary: primary,
         secondary: secondary,
         url: url,
