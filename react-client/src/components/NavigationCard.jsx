@@ -15,13 +15,14 @@ import {
 import GoogleMapReact from 'google-map-react';
 import FlatButton from 'material-ui/FlatButton';
 import $ from 'jquery';
+<<<<<<< HEAD
 
 const bodyParser = require('body-parser');
+=======
+>>>>>>> render static map
 import config from '../../../server/config.js';
 
-
-
- class NavigationCard extends React.Component {
+class NavigationCard extends React.Component {
   constructor (props) {
     super(props);
 
@@ -29,6 +30,8 @@ import config from '../../../server/config.js';
       price: ''
     }
     this.getPriceEstimates = this.getPriceEstimates.bind(this);
+    //this.getMapRoute = this.getMapRoute.bind(this);
+    
   }
     getPriceEstimates() {
     var data = JSON.stringify({
@@ -56,8 +59,24 @@ import config from '../../../server/config.js';
 
   }
 
+  // getMapRoute() {
+  //   $.ajax({
+  //     type: 'GET',
+  //     url: `https://maps.googleapis.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=${config.STATIC_MAP}&signature=QVfZM7UYN-UckJivpuEFAUfGfbs`,
+  //     contentType: 'application/json; charset=UTF-8',
+  //     success: () => {
+  //       console.log("success!")
+  //     },
+  //     error: function() {
+  //       console.log("error!")
+  //     }
+  //   })
+  // }
+
   componentDidMount() {
     this.getPriceEstimates();
+    //this.getMapRoute();
+
   }
   
   getGeoCoord(position) {
@@ -91,7 +110,7 @@ import config from '../../../server/config.js';
 
 
   render() {
-    const styles = {
+const styles = {
       card: {
         width: '100%',
         height: 400,
@@ -114,8 +133,9 @@ import config from '../../../server/config.js';
       }
     }
 
+
+
     const uberBar = './uberImage.png';
-    const carIcon = './carIcon.png';
 
     const uberImageStyle = {
       backgroundImage: `url(${uberBar})`,
@@ -123,9 +143,6 @@ import config from '../../../server/config.js';
       paddingBottom: '20'
     }
 
-    const carStyle = {
-      backgroundImage: `url(${carIcon})`
-    }
 
     const priceStyle = {
       textAlign: 'right',
@@ -133,6 +150,7 @@ import config from '../../../server/config.js';
       height: '44',
       margin: 'auto'
     }
+
 
     return (
       <div>
@@ -146,8 +164,14 @@ import config from '../../../server/config.js';
                 color={white}/>}
               style={styles.cardHeader}/>
               <Divider/>
-              <div
+               <div
                 style={styles.map}>
+                <GoogleMapReact
+                  bootstrapURLKeys={{key: config.STATIC_MAP}}
+                  center={{lat: 37.7749, lng: -122.42}}
+                  zoom={11}
+                >
+                </GoogleMapReact>
               </div>
               <div style={uberImageStyle}> 
                 <p style={priceStyle}>Price Estimate: {this.state.price}</p>
