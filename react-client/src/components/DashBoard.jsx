@@ -20,7 +20,10 @@ import IconButton from 'material-ui/IconButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Event from 'material-ui/svg-icons/action/event';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
-import Delete from 'material-ui/svg-icons/action/delete'
+import Delete from 'material-ui/svg-icons/action/delete';
+import Dialog from 'material-ui/Dialog';
+
+
 import {
   BrowserRouter as Router,
   Route,
@@ -33,6 +36,8 @@ import $ from 'jquery';
 import SignOutToolBar from './SignOutToolBar.jsx';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+
+
 
 const months = {
   0: 'aJanuary',
@@ -57,14 +62,15 @@ class DashBoard extends React.Component {
       sights: [],
       events: [],
       flight: {},
-      returnFlight : {},
+      returnFlight: {},
       flightsArray: [],
       index: 0,
       weather: [],
       itinerary: {},
       location: '',
       drawerOpen: false,
-      returnFlightStatus: false
+      returnFlightStatus: false,
+      alertIsOpen: false
     }
     this.searchGoogle = this.searchGoogle.bind(this);
     this.flightSearch = this.flightSearch.bind(this);
@@ -77,6 +83,8 @@ class DashBoard extends React.Component {
     this.toggleItinerary = this.toggleItinerary.bind(this);
     this.exitToApp = this.exitToApp.bind(this);
     this.deleteCurrent = this.deleteCurrent.bind(this);
+    this.handleOpen = this.handleOpen.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   searchEvents(location) {
@@ -90,6 +98,14 @@ class DashBoard extends React.Component {
     })
   }
 
+ handleOpen() {
+   this.setState({alertIsOpen: true});
+ }
+
+ handleClose() {
+   this.setState({alertIsOpen: false});
+ }
+
   searchGoogle(location) {
     $.get('/sights', {
       location: location
@@ -97,8 +113,8 @@ class DashBoard extends React.Component {
     .done((data) => {
       this.setState({
         sights: data
-      })
-    })
+      });
+    });
   }
 
 
@@ -112,7 +128,7 @@ class DashBoard extends React.Component {
     })
     .done(function(data) {
       context.setState({
-        flightsArray:data,
+        flightsArray: data,
         location: data[0].destination
 
       })
@@ -129,7 +145,9 @@ class DashBoard extends React.Component {
       })
     .fail(function(err) {
       console.log('failed to GET', err);
-    })
+    });
+
+
   }
 
   flightSearch(airline, flight, month, day, year, flightType) {
@@ -236,6 +254,8 @@ class DashBoard extends React.Component {
       this.searchWeather(flight.destination);
       this.searchEvents(flight.destination);
     });
+
+    this.databaseItinerarySearch();
   }
 
   searchFood(location) {
@@ -265,49 +285,112 @@ class DashBoard extends React.Component {
   submitToItinerary(date, primary, secondary, url, type) {
     let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
-    if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
-      let newItem = {
+    // if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
+    //   let newItem = {
+    //     primary: primary,
+    //     secondary: secondary,
+    //     url: url,
+    //     type: type
+    //   };
+    //   let itineraryItems = this.state.itinerary[itineraryKey];
+    //   itineraryItems.push(newItem);
+
+    //   let newDateItem = {};
+    //   newDateItem[itineraryKey] = itineraryItems;
+
+    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
+
+    //   this.setState({
+    //     itinerary: newItineraryObj
+    //   });
+
+    // } else {
+    //   let newItem = {};
+    //   newItem[itineraryKey] = [{
+    //     primary: primary,
+    //     secondary: secondary,
+    //     url: url,
+    //     type: type
+    //   }];
+    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
+
+    //   this.setState({
+    //     itinerary: newItineraryObj
+    //   });
+    // }
+
+    let context = this;
+    $.ajax({
+      type: 'POST',
+      url: '/database/itinerary',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        airline: context.state.flight.airline,
+        flightNumber: context.state.flight.flightNumber,
+        date: itineraryKey,
         primary: primary,
         secondary: secondary,
         url: url,
         type: type
-      };
-      let itineraryItems = this.state.itinerary[itineraryKey];
-      itineraryItems.push(newItem);
+      }),
+      success: (data) => {
+        console.log('Successfully posted itinerary data');
+      },
+      error: (error) => {
+        console.log('Error posting itinerary data', error);
+      }
+    });
+  }
 
-      let newDateItem = {};
-      newDateItem[itineraryKey] = itineraryItems;
+  databaseItinerarySearch() {
+    var context = this;
+    console.log('INITIAL FLIGHT', context.state.flight);
 
-      let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
+    $.get('/database/getItinerary', {
+      airline: context.state.flight.airline,
+      flightNumber: context.state.flight.flightNumber,
+    })
+    .done((data) => {
+      console.log('Successfully received itinerary data');
+      console.log('DATAAA', data);
+      let newItinerary = {};
 
-      this.setState({
-        itinerary: newItineraryObj
+      data.forEach((item) => {
+        let newItem = {
+          primary: item.primary,
+          secondary: item.secondary,
+          url: item.url,
+          type: item.type
+        };
+
+        if (newItinerary[item.date]) {
+          newItinerary[item.date].push(newItem);
+        } else {
+          newItinerary[item.date] = [newItem];
+        }
       });
 
-    } else {
-      let newItem = {};
-      newItem[itineraryKey] = [{
-        primary: primary,
-        secondary: secondary,
-        url: url,
-        type: type
-      }];
-      let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
-
-      this.setState({
-        itinerary: newItineraryObj
+      context.setState({
+        itinerary: newItinerary
       });
-    }
+    })
+    .fail((err) => {
+      console.log('failed to receive itinerary data');
+    });
   }
 
   toggleItinerary() {
+    this.databaseItinerarySearch();
+
     this.setState({
       drawerOpen: !this.state.drawerOpen
     });
   }
 
   deleteCurrent() {
+    this.handleClose()
     this.state.flightsArray.splice(this.state.index, 1);
+    this.historyChange(null, 0)
   }
 
   exitToApp() {
@@ -316,7 +399,6 @@ class DashBoard extends React.Component {
     });
   }
 
-
   componentDidMount() {
     this.databaseFlightSearch();
   }
@@ -324,12 +406,24 @@ class DashBoard extends React.Component {
   render() {
     console.log('RETURN FLIGHT STATE', this.state.returnFlight)
     console.log('ORIGINAL FLIGHT STATE', this.state.flight)
+    const actions = [
+          <FlatButton
+            label="Cancel"
+            primary={true}
+            onTouchTap={this.handleClose}
+          />,
+          <FlatButton
+            label="Delete"
+            primary={true}
+            onTouchTap={this.deleteCurrent}
+          />,
+      ];
     const styles = {
       gridList: {
         width: 'auto',
-        overflowX:'hidden',
+        overflowX: 'hidden',
         height: 'auto',
-        overflowY:'visible',
+        overflowY: 'visible',
         marginLeft: 20,
         marginRight: 20,
       },
@@ -376,13 +470,23 @@ class DashBoard extends React.Component {
         position: 'relative',
         bottom: 3
       }
-    }
-    return(
+    };
+
+
+    return (
+      <MuiThemeProvider>
       <div>
+        <Dialog
+        actions={actions}
+        modal={false}
+        open={this.state.alertIsOpen}
+        onRequestClose={this.handleClose}
+       >
+       Are you sure you want to delete this trip?
+       </Dialog>
         <SignOutToolBar/>
         <div
           style={styles.gridList}>
-          <MuiThemeProvider>
             <SelectField
               floatingLabelText='Trips'
               onChange={this.historyChange}
@@ -392,8 +496,6 @@ class DashBoard extends React.Component {
               })}
             </SelectField>
 
-          </MuiThemeProvider>
-          <MuiThemeProvider>
             <GridList
               cellHeight={400}
               cols = {3}
@@ -404,10 +506,7 @@ class DashBoard extends React.Component {
               <MuiThemeProvider><FoodCard food={this.state.food} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><EventListCard events={this.state.events} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
-
             </GridList>
-          </MuiThemeProvider>
-          <MuiThemeProvider>
             <Drawer
               width={500}
               docked={false}
@@ -424,18 +523,14 @@ class DashBoard extends React.Component {
               />
               <Itinerary itinerary={this.state.itinerary} />
             </Drawer>
-          </MuiThemeProvider>
-          <MuiThemeProvider>
           <FloatingActionButton
             style={styles.fab3}
             backgroundColor = {redA700}
-            label="Search"
-            onClick = {this.deleteCurrent}
+            label="Delete"
+            onClick = {this.handleOpen}
             >
             <Delete />
           </FloatingActionButton>
-          </MuiThemeProvider>
-          <MuiThemeProvider>
             <Link to='/trip'>
               <FloatingActionButton
                 style={styles.fab}
@@ -443,8 +538,6 @@ class DashBoard extends React.Component {
                 label="Search"><ContentAdd />
               </FloatingActionButton>
             </Link>
-          </MuiThemeProvider>
-          <MuiThemeProvider>
             <FloatingActionButton
               style={styles.fab2}
               backgroundColor={tealA700}
@@ -453,9 +546,9 @@ class DashBoard extends React.Component {
             >
               <Event />
             </FloatingActionButton>
-          </MuiThemeProvider>
         </div>
       </div>
+      </MuiThemeProvider>
     )
   }
 }
