@@ -140,12 +140,12 @@ import {
               </CardHeader>
             </Card>
           </MuiThemeProvider>
-          <RaisedButton onTouchTap = { (e) => {e.preventDefault(); this.changeToReturnFlight()}} fullWidth = {true} label={"Return Flight Info"} primary={true} />
         </div>
-      );
+      )
 
 
-    } else {
+    }
+    else {
       if (!this.state.returnFlight) {
         return (
           <div>
@@ -207,11 +207,12 @@ import {
                 </CardHeader>
               </Card>
             </MuiThemeProvider>
-          <RaisedButton onTouchTap = { (e) => {e.preventDefault(); this.changeToReturnFlight()}} fullWidth = {true} label={"Return Flight Info"} primary={true} />
+            <RaisedButton onTouchTap = { (e) => {e.preventDefault(); this.changeToReturnFlight()}} fullWidth = {true} label={"Return Flight Info"} primary={true} />
           </div>
-        );
-      } else {
-        return (
+        )
+        }
+          else {
+            return(
             <div>
               <MuiThemeProvider>
                 <Card style={styles.card}>
@@ -269,14 +270,15 @@ import {
                   title={'Flight Duration ' + this.props.returnFlight.flightDuration}
                   style={styles.cardHeader}>
                 </CardHeader>
+
             </Card>
-            <RaisedButton onTouchTap = { (e) => {e.preventDefault(); this.changeToDepartureFlight()}} fullWidth = {true} label={"Departure Flight Info"} primary={true} />
           </MuiThemeProvider>
+          <RaisedButton onTouchTap = { (e) => {e.preventDefault(); this.changeToDepartureFlight()}} fullWidth = {true} label={"Departure Flight Info"} primary={true} />
         </div>
-            );
-      }
+      )
     }
   }
+}
 }
 
 
