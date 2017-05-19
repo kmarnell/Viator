@@ -103,23 +103,6 @@ app.get('/auth/google/callback',
   });
 
 // API routes
-<<<<<<< HEAD
-app.get('/geoCoord', (req, res) => {
-  let position = req.query.position;
-  let geoCoord;
-  request.get(`https://maps.googleapis.com/maps/api/geocode/json?key=${GOOGLE_KEY}&address=${position}`,
-    (error, response, body) => {
-      if (error) {
-        console.error(err);
-      }
-      geoCoord = JSON.parse(body).results[0].geometry['location'];
-      res.send(JSON.stringify(geoCoord));
-    });
-});
-
-
-=======
-
 //uber api call for price estimate
 app.post('/estimates/price', (req, res) => {
   request.get(`https://api.uber.com/v1.2/estimates/price?server_token=${req.headers.authorization}&start_latitude=${req.body.start_latitude}&start_longitude=-${req.body.start_longitude}&end_latitude=${req.body.end_latitude}&end_longitude=-${req.body.end_longitude}`,
@@ -131,8 +114,6 @@ app.post('/estimates/price', (req, res) => {
 });
 
 
-
->>>>>>> render price estimates from Uber based on hardcoded route
 app.get('/weather', (req, res) => {
   // Call Geocoding API for coordinates based on location
   const getCoords = new Promise((resolve, reject) => {

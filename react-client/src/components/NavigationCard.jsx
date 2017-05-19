@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {GridList, GridTile} from 'material-ui/GridList';
@@ -6,6 +6,7 @@ import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import MapNavigation from 'material-ui/svg-icons/maps/navigation';
+import MapsPlace from 'material-ui/svg-icons/maps/place';
 import Avatar from 'material-ui/Avatar';
 import Arrow from 'material-ui/svg-icons/navigation/arrow-forward';
 import Divider from 'material-ui/Divider';
@@ -16,18 +17,21 @@ import GoogleMapReact from 'google-map-react';
 import FlatButton from 'material-ui/FlatButton';
 import $ from 'jquery';
 import config from '../../../server/config.js';
+    const uberBar = './uberImage.png';
+const mapPin = './mapPin.png';
 
 
+const AnyReactComponent = ({  img_src }) => <div><img src={mapPin}/></div>;
 
 class NavigationCard extends React.Component {
   constructor (props) {
     super(props);
 
     this.state = {
-      price: ''
+      price: '',
+      markers:[]
     }
     this.getPriceEstimates = this.getPriceEstimates.bind(this);
-    //this.getMapRoute = this.getMapRoute.bind(this);
     
   }
     getPriceEstimates() {
@@ -56,24 +60,12 @@ class NavigationCard extends React.Component {
 
   }
 
-  // getMapRoute() {
-  //   $.ajax({
-  //     type: 'GET',
-  //     url: `https://maps.googleapis.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=${config.STATIC_MAP}&signature=QVfZM7UYN-UckJivpuEFAUfGfbs`,
-  //     contentType: 'application/json; charset=UTF-8',
-  //     success: () => {
-  //       console.log("success!")
-  //     },
-  //     error: function() {
-  //       console.log("error!")
-  //     }
-  //   })
-  // }
-
   componentDidMount() {
     this.getPriceEstimates();
     //this.getMapRoute();
-
+     this.setState({
+      markers: [{lat: 37.7749, lng: -122.42}, {lat: 37.8044, lng: -122.2711}],
+    });
   }
 
   render() {
@@ -88,10 +80,6 @@ const styles = {
       cardHeader: {
         height: '20%',
       },
-      center: {
-        lat: 37.7749,
-        lng: -122.42,
-      },
       map: {
         height: '65%',
       },
@@ -100,16 +88,11 @@ const styles = {
       }
     }
 
-
-
-    const uberBar = './uberImage.png';
-
     const uberImageStyle = {
       backgroundImage: `url(${uberBar})`,
       width: '100%',
       paddingBottom: '20'
     }
-
 
     const priceStyle = {
       textAlign: 'right',
@@ -138,6 +121,17 @@ const styles = {
                   center={{lat: 37.7749, lng: -122.42}}
                   zoom={11}
                 >
+                  {this.state.markers.map((marker, i) =>{
+                  return(
+                      <AnyReactComponent
+                        key={i}
+                        lat={marker.lat}
+                        lng={marker.lng}
+                        img_src={marker.img_src}
+                      /> 
+
+                    )
+                  })} 
                 </GoogleMapReact>
               </div>
               <div style={uberImageStyle}> 
