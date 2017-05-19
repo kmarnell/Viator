@@ -21,19 +21,27 @@ import $ from 'jquery';
   constructor (props) {
     super(props);
      this.getGeoCoord = this.getGeoCoord.bind(this);
+     this.state = {
+      geoLocations: {}
+     }
   }
   
   getGeoCoord(position) {
+    var context = this;
+      console.log('getCordasf', position)
     if (position) {
+      console.log('position is undefined');
+    } else if (this.state.geoLocations[position]) {
+      return this.state.geoLocations[position]
+    } else {
       $.ajax({
         type: 'GET',
         url: '/geoCoord',
         contentType: 'application/json',
-        data: {position: position.replace(/[, ]+/g, " ").trim()},
+        data: {position: position},
         dataType: 'text',
         success: (data) => {
           console.log(`success getGeoCoord`,  data)
-          return data
         },
         fail: (data) => {
           console.log('dash.getGeoCoord FAIL ', err)
@@ -41,17 +49,11 @@ import $ from 'jquery';
       })
       .done(function(data) {
         console.log('after ajax geoCoord: ' , typeof data, data, position)
+        context.setState({geoLocations: data})
         return data;
       })
-    } else { /* position === undefined */
-      console.log('position undefined') 
-  }
+    } 
 }
-
-  componentDidMount() {
-  }
-
-
 
   render() {
     const styles = {
