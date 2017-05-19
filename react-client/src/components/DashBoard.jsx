@@ -20,13 +20,14 @@ import IconButton from 'material-ui/IconButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Event from 'material-ui/svg-icons/action/event';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
+import Delete from 'material-ui/svg-icons/action/delete'
 import {
   BrowserRouter as Router,
   Route,
   Link,
 } from 'react-router-dom';
 import {
-  amberA700, tealA700, white
+  amberA700, tealA700, white, redA700
 } from 'material-ui/styles/colors';
 import $ from 'jquery';
 import SignOutToolBar from './SignOutToolBar.jsx';
@@ -75,6 +76,7 @@ class DashBoard extends React.Component {
     this.submitToItinerary = this.submitToItinerary.bind(this);
     this.toggleItinerary = this.toggleItinerary.bind(this);
     this.exitToApp = this.exitToApp.bind(this);
+    this.deleteCurrent = this.deleteCurrent.bind(this);
   }
 
   searchEvents(location) {
@@ -304,6 +306,10 @@ class DashBoard extends React.Component {
     });
   }
 
+  deleteCurrent() {
+    this.state.flightsArray.splice(this.state.index, 1);
+  }
+
   exitToApp() {
     this.setState({
       drawerOpen: false
@@ -345,6 +351,15 @@ class DashBoard extends React.Component {
         zIndex: 200,
         position: 'fixed',
       },
+      fab3: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 150,
+        left: 'auto',
+        zIndex: 250,
+        position: 'fixed',
+      },
       hist: {
         top: 50,
         left: 30,
@@ -376,6 +391,7 @@ class DashBoard extends React.Component {
                 return <MenuItem key={ind} value={ind} label={index.Airline + ' ' +index.flight} primaryText={index.Airline + ' ' +index.flight} />
               })}
             </SelectField>
+
           </MuiThemeProvider>
           <MuiThemeProvider>
             <GridList
@@ -408,6 +424,16 @@ class DashBoard extends React.Component {
               />
               <Itinerary itinerary={this.state.itinerary} />
             </Drawer>
+          </MuiThemeProvider>
+          <MuiThemeProvider>
+          <FloatingActionButton
+            style={styles.fab3}
+            backgroundColor = {redA700}
+            label="Search"
+            onClick = {this.deleteCurrent}
+            >
+            <Delete />
+          </FloatingActionButton>
           </MuiThemeProvider>
           <MuiThemeProvider>
             <Link to='/trip'>
