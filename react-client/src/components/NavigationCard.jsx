@@ -118,7 +118,7 @@ const styles = {
                 style={styles.map}>
                 <GoogleMapReact
                   bootstrapURLKeys={{key: config.STATIC_MAP}}
-                  center={{lat: 37.7749, lng: -122.42}}
+                  center={{lat: 37.8044, lng: -122.2711},{lat: 37.7749, lng: -122.42}}
                   zoom={11}
                 >
                   {this.state.markers.map((marker, i) =>{
