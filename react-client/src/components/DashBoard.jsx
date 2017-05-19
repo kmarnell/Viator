@@ -56,7 +56,7 @@ class DashBoard extends React.Component {
       sights: [],
       events: [],
       flight: {},
-      returnFlight : {},
+      returnFlight: {},
       flightsArray: [],
       index: 0,
       weather: [],
@@ -95,8 +95,8 @@ class DashBoard extends React.Component {
     .done((data) => {
       this.setState({
         sights: data
-      })
-    })
+      });
+    });
   }
 
 
@@ -110,7 +110,7 @@ class DashBoard extends React.Component {
     })
     .done(function(data) {
       context.setState({
-        flightsArray:data,
+        flightsArray: data,
         location: data[0].destination
 
       })
@@ -127,7 +127,9 @@ class DashBoard extends React.Component {
       })
     .fail(function(err) {
       console.log('failed to GET', err);
-    })
+    });
+
+
   }
 
   flightSearch(airline, flight, month, day, year, flightType) {
@@ -234,6 +236,8 @@ class DashBoard extends React.Component {
       this.searchWeather(flight.destination);
       this.searchEvents(flight.destination);
     });
+
+    this.databaseItinerarySearch();
   }
 
   searchFood(location) {
@@ -263,42 +267,103 @@ class DashBoard extends React.Component {
   submitToItinerary(date, primary, secondary, url, type) {
     let itineraryKey = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 
-    if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
-      let newItem = {
+    // if (this.state.itinerary.hasOwnProperty(itineraryKey)) {
+    //   let newItem = {
+    //     primary: primary,
+    //     secondary: secondary,
+    //     url: url,
+    //     type: type
+    //   };
+    //   let itineraryItems = this.state.itinerary[itineraryKey];
+    //   itineraryItems.push(newItem);
+
+    //   let newDateItem = {};
+    //   newDateItem[itineraryKey] = itineraryItems;
+
+    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
+
+    //   this.setState({
+    //     itinerary: newItineraryObj
+    //   });
+
+    // } else {
+    //   let newItem = {};
+    //   newItem[itineraryKey] = [{
+    //     primary: primary,
+    //     secondary: secondary,
+    //     url: url,
+    //     type: type
+    //   }];
+    //   let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
+
+    //   this.setState({
+    //     itinerary: newItineraryObj
+    //   });
+    // }
+
+    let context = this;
+    $.ajax({
+      type: 'POST',
+      url: '/database/itinerary',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        airline: context.state.flight.airline,
+        flightNumber: context.state.flight.flightNumber,
+        date: itineraryKey,
         primary: primary,
         secondary: secondary,
         url: url,
         type: type
-      };
-      let itineraryItems = this.state.itinerary[itineraryKey];
-      itineraryItems.push(newItem);
+      }),
+      success: (data) => {
+        console.log('Successfully posted itinerary data');
+      },
+      error: (error) => {
+        console.log('Error posting itinerary data', error);
+      }
+    });    
+  }
 
-      let newDateItem = {};
-      newDateItem[itineraryKey] = itineraryItems;
+  databaseItinerarySearch() {
+    var context = this;
+    console.log('INITIAL FLIGHT', context.state.flight);
 
-      let newItineraryObj = Object.assign({}, this.state.itinerary, newDateItem);
-
-      this.setState({
-        itinerary: newItineraryObj
+    $.get('/database/getItinerary', {
+      airline: context.state.flight.airline,
+      flightNumber: context.state.flight.flightNumber,
+    })
+    .done((data) => {
+      console.log('Successfully received itinerary data');
+      console.log('DATAAA', data);
+      let newItinerary = {};
+      
+      data.forEach((item) => {
+        let newItem = {
+          primary: item.primary,
+          secondary: item.secondary,
+          url: item.url,
+          type: item.type
+        };
+        
+        if (newItinerary[item.date]) {
+          newItinerary[item.date].push(newItem);  
+        } else {
+          newItinerary[item.date] = [newItem];
+        }
       });
 
-    } else {
-      let newItem = {};
-      newItem[itineraryKey] = [{
-        primary: primary,
-        secondary: secondary,
-        url: url,
-        type: type
-      }];
-      let newItineraryObj = Object.assign({}, this.state.itinerary, newItem);
-
-      this.setState({
-        itinerary: newItineraryObj
+      context.setState({
+        itinerary: newItinerary
       });
-    }
+    })
+    .fail((err) => {
+      console.log('failed to receive itinerary data');
+    });
   }
 
   toggleItinerary() {
+    this.databaseItinerarySearch();
+
     this.setState({
       drawerOpen: !this.state.drawerOpen
     });
@@ -310,7 +375,6 @@ class DashBoard extends React.Component {
     });
   }
 
-
   componentDidMount() {
     this.databaseFlightSearch();
   }
@@ -321,9 +385,9 @@ class DashBoard extends React.Component {
     const styles = {
       gridList: {
         width: 'auto',
-        overflowX:'hidden',
+        overflowX: 'hidden',
         height: 'auto',
-        overflowY:'visible',
+        overflowY: 'visible',
         marginLeft: 20,
         marginRight: 20,
       },
@@ -361,8 +425,9 @@ class DashBoard extends React.Component {
         position: 'relative',
         bottom: 3
       }
-    }
-    return(
+    };
+
+    return (
       <div>
         <SignOutToolBar/>
         <div
@@ -388,7 +453,6 @@ class DashBoard extends React.Component {
               <MuiThemeProvider><FoodCard food={this.state.food} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><SightsCard sights={this.state.sights} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
               <MuiThemeProvider><EventListCard events={this.state.events} submitToItinerary={this.submitToItinerary}/></MuiThemeProvider>
-
             </GridList>
           </MuiThemeProvider>
           <MuiThemeProvider>
