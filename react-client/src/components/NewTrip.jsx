@@ -5,6 +5,7 @@ import {
   StepLabel,
 } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
 import FlatButton from 'material-ui/FlatButton';
 import {Link} from 'react-router-dom';
 import {Redirect} from 'react-router';
@@ -18,9 +19,10 @@ import SignOutToolBar from './SignOutToolBar.jsx';
 import $ from 'jquery';
 import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
+import Home from 'material-ui/svg-icons/action/home';
 import ActionFlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff';
 import {
-  pink300, pink500, white
+  pink300, pink500, blueA700, white
 } from 'material-ui/styles/colors';
 
 
@@ -34,7 +36,8 @@ class NewTrip extends React.Component {
       airline: 'AS',
       flightNumber: '',
       finalDestination: '',
-      date:''
+      date:'',
+      homePage: false
     }
     this.handleNext = this.handleNext.bind(this);
     this.handlePrev = this.handlePrev.bind(this);
@@ -43,6 +46,9 @@ class NewTrip extends React.Component {
     this.handleDate = this.handleDate.bind(this);
     this.handleFlightNumber = this.handleFlightNumber.bind(this);
     this.handleFinalDestination = this.handleFinalDestination.bind(this);
+    this.handleReturnFlightNumber = this.handleReturnFlightNumber.bind(this);
+    this.handleReturnFlightDate = this.handleReturnFlightDate.bind(this);
+    this.redirectToHomePage = this.redirectToHomePage.bind(this);
   }
 
   isFlightInfoDefault () {
@@ -58,24 +64,29 @@ class NewTrip extends React.Component {
         }
       }
         return false;
-    }; // end of isStateDefault 
+    }; // end of isStateDefault
 
   handleNext () {
     const {stepIndex} = this.state;
     if (stepIndex ===1 && (this.state.flightNumber === '' || this.state.date === '') ) {
       alert(`Please update Flight Number and Start Date to proceed`)
     }
-    else if (stepIndex === 2 && this.isFlightInfoDefault()) {
+    else if (stepIndex === 2 && (this.state.flightNumber === '' || this.state.date === '') ) {
+      alert(`Please update Flight Number and Start Date to proceed`)
+    }
+    else if (stepIndex === 3 && this.isFlightInfoDefault()) {
         alert(`Please update ${this.isFlightInfoDefault()} information`)
-      } else { 
+      } else {
     this.setState({
       stepIndex: stepIndex + 1,
-      finished: stepIndex >= 2,
+      finished: stepIndex >= 3,
+      currentFieldNumber: '',
     });
     }
   };
 
   handlePrev () {
+    this.setState({currentFieldNumber: ''})
     const {stepIndex} = this.state;
     if (stepIndex > 0) {
       this.setState({stepIndex: stepIndex - 1});
@@ -90,12 +101,25 @@ class NewTrip extends React.Component {
   };
   handleFlightNumber (event, flightNumber) {
     this.setState({flightNumber: flightNumber});
+    this.setState({currentFieldNumber: flightNumber});
   };
   handleFinalDestination (event, address) {
     this.setState({finalDestination: address});
   };
 
-  
+  handleReturnFlightNumber (event, flightNumber) {
+    this.setState({returnFlightNumber: flightNumber})
+    this.setState({currentFieldNumber: flightNumber})
+  }
+  handleReturnFlightDate (event, date) {
+    this.setState({returnDate: date});
+  }
+
+  redirectToHomePage() {
+    this.setState({homePage:true})
+  }
+
+
   getStepContent(stepIndex) {
     const styles = {
       wrapper: {
@@ -134,11 +158,11 @@ class NewTrip extends React.Component {
                       backgroundColor={pink300}
                       style={styles.chip}
                     >
-                      <Avatar 
-                        backgroundColor = {white} 
-                        color={pink500} 
+                      <Avatar
+                        backgroundColor = {white}
+                        color={pink500}
                         size={40}
-                        icon={<ActionFlightTakeoff/>} 
+                        icon={<ActionFlightTakeoff/>}
                       />
                       {this.state.airline}
                     </Chip>
@@ -165,11 +189,55 @@ class NewTrip extends React.Component {
                       id={2}
                       defaultValue={this.state.flightNumber}
                       floatingLabelFixed={true}
+                      value = {this.state.currentFieldNumber}
                     />
                   </MuiThemeProvider>
                 </div>
                 );
-      case 2:
+        case 2:
+          return (<div>
+                    <MuiThemeProvider>
+                      <Chip
+                        backgroundColor={pink300}
+                        style={styles.chip}
+                      >
+                        <Avatar
+                          backgroundColor = {white}
+                          color={pink500}
+                          size={40}
+                          icon={<ActionFlightTakeoff/>}
+                        />
+                        {this.state.airline}
+                      </Chip>
+                    </MuiThemeProvider>
+                    <MuiThemeProvider>
+                      <DatePicker
+                        onChange={this.handleReturnFlightDate}
+                        hintText="Flight Date"
+                        firstDayOfWeek={0}
+                        formatDate={new DateTimeFormat('en-US', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        }).format}/>
+                    </MuiThemeProvider>
+                    <MuiThemeProvider>
+                      <Divider />
+                    </MuiThemeProvider>
+                    <MuiThemeProvider>
+                      <TextField
+                        floatingLabelText="Flight Number"
+                        onChange={this.handleReturnFlightNumber}
+                        hintText="008"
+                        id={2}
+                        defaultValue={this.state.returnFlightNumber}
+                        floatingLabelFixed={true}
+                        value={this.state.currentFieldNumber}
+                      />
+                    </MuiThemeProvider>
+                  </div>
+                  );
+      case 3:
         return (<div>
                   <div style={styles.wrapper}>
                     <MuiThemeProvider>
@@ -177,11 +245,11 @@ class NewTrip extends React.Component {
                         style = {styles.chip}
                         backgroundColor={pink300}
                       >
-                        <Avatar 
-                          backgroundColor = {white} 
-                          color={pink500} 
+                        <Avatar
+                          backgroundColor = {white}
+                          color={pink500}
                           size={40}
-                          icon={<ActionFlightTakeoff/>} 
+                          icon={<ActionFlightTakeoff/>}
                         />
                         {this.state.airline}
                       </Chip>
@@ -191,9 +259,9 @@ class NewTrip extends React.Component {
                         style = {styles.chip}
                         backgroundColor={pink300}
                       >
-                        <Avatar 
-                          backgroundColor = {white} 
-                          color={pink500} 
+                        <Avatar
+                          backgroundColor = {white}
+                          color={pink500}
                           size={40}>
                           #
                         </Avatar>
@@ -230,7 +298,9 @@ saveData() {
       airline: context.state.airline,
       flightNumber: context.state.flightNumber,
       finalDestination: context.state.finalDestination,
-      date: context.state.date
+      date: context.state.date,
+      returnFlightNumber: context.state.returnFlightNumber,
+      returnDate: context.state.returnDate
         })
       })
       .done(function(data) {
@@ -248,7 +318,20 @@ saveData() {
       contentStyle: {
         margin: '0 16px',
       },
+      fab: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 20,
+        left: 'auto',
+        zIndex: 100,
+        position: 'fixed',
+      },
     }
+
+     if (this.state.homePage) {
+         return <Redirect to="/dashboard" />
+      }
     return (
       <div>
         <SignOutToolBar/>
@@ -259,7 +342,10 @@ saveData() {
                 <StepLabel>Select Airline</StepLabel>
               </Step>
               <Step>
-                <StepLabel>Choose Flight # & Date</StepLabel>
+                <StepLabel>Choose Destination Flight # & Date</StepLabel>
+              </Step>
+              <Step>
+                <StepLabel>Choose Return Flight # & Date (optional)</StepLabel>
               </Step>
               <Step>
                 <StepLabel>Add Final Destination Address</StepLabel>
@@ -284,7 +370,7 @@ saveData() {
                   </MuiThemeProvider>
                   <MuiThemeProvider>
                     <RaisedButton
-                      label={stepIndex === 2 ? 'Finish' : 'Next'}
+                      label={stepIndex === 3 ? 'Finish' : 'Next'}
                       primary={true}
                       onClick={this.handleNext}
                     />
@@ -294,6 +380,16 @@ saveData() {
             )}
           </div>
         </div>
+        <MuiThemeProvider>
+        <FloatingActionButton
+          style={styles.fab}
+          backgroundColor = {blueA700}
+          label="Home"
+          onTouchTap={this.redirectToHomePage}
+          >
+          <Home />
+          </FloatingActionButton>
+        </MuiThemeProvider>
       </div>
     );
   }
