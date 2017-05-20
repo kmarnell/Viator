@@ -26,13 +26,15 @@ const AnyReactComponent = ({  img_src }) => <div><img src={mapPin}/></div>;
 class NavigationCard extends React.Component {
   constructor (props) {
     super(props);
-<<<<<<< HEAD
 
     this.state = {
       price: '',
-      markers:[]
-    }
+      geoLocations: {},
+      currentPosition: ""
+     }
+
     this.getPriceEstimates = this.getPriceEstimates.bind(this);
+    this.getGeoCoord = this.getGeoCoord.bind(this);
     
   }
     getPriceEstimates() {
@@ -58,23 +60,10 @@ class NavigationCard extends React.Component {
         console.log("error!")
       }
     })
-
   }
 
   componentDidMount() {
     this.getPriceEstimates();
-    //this.getMapRoute();
-     this.setState({
-      markers: [{lat: 37.7749, lng: -122.42}, {lat: 37.8044, lng: -122.2711}],
-    });
-=======
-     this.getGeoCoord = this.getGeoCoord.bind(this);
-     this.state = {
-      geoLocations: {
-        undefined: "Address of Undefined"
-      },
-      currentPosition: ""
-     }
   }
   
   componentWillReceiveProps() {
@@ -83,12 +72,19 @@ class NavigationCard extends React.Component {
     if (this.props.destination && this.props.arrivalPort) {
       destinationObj[this.props.destination] = this.getGeoCoord(this.props.destination);
       arrivalPortObj[this.props.arrivalPort] = this.getGeoCoord(this.props.arrivalPort);
-      this.setState({geoLocations: Object.assign(destinationObj, arrivalPortObj) })
-    }
-    
-    
+      this.setState({geoLocations: Object.assign(destinationObj, arrivalPortObj)}, function() {
+        this.setState({markers: [this.state.geoLocations[this.props.arrivalPort], this.state.geoLocations[this.props.destination]]})
+      })
+      // console.log("STATE", this.state)
+      // if(this.state.geoLocations[this.props.arrivalPort] && this.state.geoLocations[this.props.destination]) {
+        
+      // } else {
+      //   this.setState({markers: [{lat: 37.7749, lng: -122.42}, {lat: 37.8044, lng: -122.2711}]}); 
+      // }
+    } 
   }
   
+
   getGeoCoord(position) {
     var context = this;
     if (!!context.state.geoLocations[position]) {
@@ -121,47 +117,46 @@ class NavigationCard extends React.Component {
 
   geoLocation(position) {
     var context = this;
-    if ( this.state.geoLocation[position]) {
-      return this.state.geoLocation[position]
+    if ( this.state.geoLocations[position]) {
+      return this.state.geoLocations[position]
     }
     else {
       this.getGeoCoord(position)
     }
->>>>>>> 8e793ad3704f1092b104ecb6484849ee9c165704
   }
 
   render() {
-const styles = {
-      card: {
+    const styles = {
+          card: {
+            width: '100%',
+            height: 400,
+          },
+          avatar: {
+            backgroundColor: deepPurple500,
+          },
+          cardHeader: {
+            height: '20%',
+          },
+          map: {
+            height: '65%',
+          },
+          actions: {
+            height: '20%',
+          }
+        }
+
+      const uberImageStyle = {
+        backgroundImage: `url(${uberBar})`,
         width: '100%',
-        height: 400,
-      },
-      avatar: {
-        backgroundColor: deepPurple500,
-      },
-      cardHeader: {
-        height: '20%',
-      },
-      map: {
-        height: '65%',
-      },
-      actions: {
-        height: '20%',
+        paddingBottom: '20'
       }
-    }
 
-    const uberImageStyle = {
-      backgroundImage: `url(${uberBar})`,
-      width: '100%',
-      paddingBottom: '20'
-    }
-
-    const priceStyle = {
-      textAlign: 'right',
-      width: '300',
-      height: '44',
-      margin: 'auto'
-    }
+      const priceStyle = {
+        textAlign: 'right',
+        width: '300',
+        height: '44',
+        margin: 'auto'
+      }
 
 
     return (
@@ -169,14 +164,13 @@ const styles = {
         <Card
           style={styles.card}>
           <CardHeader
-<<<<<<< HEAD
-              title="Navigation from Airport"
-              subtitle='Address should go here.'
-=======
+
+              //title={`Navigation from ${this.props.arrivalPort}`}
+              //subtitle={this.props.destination}
               title= {'arrivalPort: ' + JSON.stringify(this.state.geoLocations[this.props.arrivalPort])}  
               /*geoLocation "{"lat":40.6895314,"lng":-74.1744624}" */
-              subtitle={'destination: ' + JSON.stringify(this.state.geoLocations[this.props.destination])}
->>>>>>> 8e793ad3704f1092b104ecb6484849ee9c165704
+              subtitle={'destination: ' + (this.state.geoLocations[this.props.destination])}
+
               avatar={<Avatar icon={<MapNavigation />}
                 style={styles.avatar}
                 color={white}/>}
@@ -189,15 +183,16 @@ const styles = {
                   center={{lat: 37.8044, lng: -122.2711},{lat: 37.7749, lng: -122.42}}
                   zoom={11}
                 >
-                  {this.state.markers.map((marker, i) =>{
+
+                  {this.state.markers && this.state.markers.map((marker, i) =>{
                   return(
+    
                       <AnyReactComponent
                         key={i}
                         lat={marker.lat}
                         lng={marker.lng}
                         img_src={marker.img_src}
                       /> 
-
                     )
                   })} 
                 </GoogleMapReact>

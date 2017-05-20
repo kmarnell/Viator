@@ -112,6 +112,7 @@ app.post('/estimates/price', (req, res) => {
        var parsed = JSON.parse(body);
        res.send(parsed.prices[0].estimate);
    });
+});
 
 app.get('/geoCoord', (req, res) => {
   let position = req.query.position;
