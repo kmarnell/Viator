@@ -25,6 +25,7 @@ import Dialog from 'material-ui/Dialog';
 import { SpeedDial, SpeedDialItem } from 'react-mui-speeddial';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import FlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff';
+import TextField from 'material-ui/TextField';
 
 import {
   BrowserRouter as Router,
@@ -70,10 +71,12 @@ class DashBoard extends React.Component {
       weather: [],
       itinerary: {},
       location: '',
+      recipientEmail: '',
       drawerOpen: false,
       returnFlightStatus: false,
       alertIsOpen: false,
-      newFlight: false
+      newFlight: false,
+      emailSelectionOpen: false
     };
     this.searchGoogle = this.searchGoogle.bind(this);
     this.flightSearch = this.flightSearch.bind(this);
@@ -89,7 +92,10 @@ class DashBoard extends React.Component {
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.newFlight = this.newFlight.bind(this);
+    this.openEmailSelection = this.openEmailSelection.bind(this);
+    this.closeEmailSelection = this.closeEmailSelection.bind(this);
     this.sendEmail = this.sendEmail.bind(this);
+    this.setRecipient = this.setRecipient.bind(this);
   }
 
   searchEvents(location) {
@@ -381,6 +387,26 @@ class DashBoard extends React.Component {
     });
   }
 
+  openEmailSelection() {
+    this.setState({
+      emailSelectionOpen: true
+    });
+  }
+
+  closeEmailSelection() {
+    this.setState({
+      emailSelectionOpen: false
+    });
+  }
+
+  setRecipient(address) {
+    console.log(address)
+
+    this.setState({
+      recipientEmail: address
+    });
+  }
+
   sendEmail() {
     let context = this;
     $.ajax({
@@ -389,7 +415,8 @@ class DashBoard extends React.Component {
       contentType: 'application/json',
       data: JSON.stringify({
         flight: context.state.flight,
-        itinerary: context.state.itinerary
+        itinerary: context.state.itinerary,
+        recipientEmail: context.state.recipientEmail
       }),
       success: (data) => {
         console.log('Successfully sent email post request to server');
@@ -521,12 +548,31 @@ class DashBoard extends React.Component {
                 title="Trip Itinerary"
                 titleStyle={styles.appBarTitle}
                 iconElementLeft={<IconButton><ExitToApp style={{fill: white}} /></IconButton>}
-                iconElementRight={<FlatButton label="Send via Email" onTouchTap={this.sendEmail} />}
+                iconElementRight={<FlatButton label="Send via Email" onTouchTap={this.openEmailSelection} />}
                 onLeftIconButtonTouchTap={this.exitToApp}
                 iconStyleLeft={styles.itineraryIcon}
                 iconStyleRight={styles.itineraryIcon}
                 style={{height: 56}}
               />
+              <Dialog
+                open={this.state.emailSelectionOpen}
+                onRequestClose={this.closeEmailSelection}
+              >
+                <TextField
+                  hintText="recipient email address"
+                  floatingLabelText="recipient email address"
+                  fullWidth={true}
+                  onChange={(event, address) => this.setRecipient(address)}
+                />
+                <FlatButton
+                  label="Send"
+                  primary={true}
+                  onTouchTap={this.sendEmail}
+                />
+                <FlatButton 
+
+                />
+              </Dialog>
               <Itinerary itinerary={this.state.itinerary} />
             </Drawer>
             <SpeedDial
