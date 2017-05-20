@@ -313,9 +313,6 @@ saveData() {
   };
 
   render () {
-    console.log('return date', this.state.returnDate)
-    console.log('date', this.state.date)
-
     const {finished, stepIndex} = this.state;
     const styles = {
       contentStyle: {

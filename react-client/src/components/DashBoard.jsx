@@ -305,13 +305,11 @@ class DashBoard extends React.Component {
 
   databaseItinerarySearch() {
     var context = this;
-
     $.get('/database/getItinerary', {
       airline: context.state.flight.airline,
       flightNumber: context.state.flight.flightNumber,
     })
     .done((data) => {
-      console.log('Successfully received itinerary data');
       let newItinerary = {};
 
       data.forEach((item) => {
@@ -379,8 +377,6 @@ class DashBoard extends React.Component {
   }
 
   render() {
-    console.log('RETURN FLIGHT STATE', this.state.returnFlight)
-    console.log('ORIGINAL FLIGHT STATE', this.state.flight)
     const actions = [
           <FlatButton
             label="Cancel"
@@ -393,6 +389,7 @@ class DashBoard extends React.Component {
             onTouchTap={this.deleteCurrent}
           />,
       ];
+
     const styles = {
       gridList: {
         width: 'auto',
