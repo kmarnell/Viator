@@ -15,6 +15,10 @@ import {
 import GoogleMapReact from 'google-map-react';
 import FlatButton from 'material-ui/FlatButton';
 import $ from 'jquery';
+import config from '../../../server/config.js';
+const uberBar = './uberImage.png';
+const mapPin = './mapPin.png';
+
 
 
  class NavigationCard extends React.Component {
