@@ -3,7 +3,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const fs = require('fs');
 const Mailgun = require('mailgun-js');
 const db = require('../database/index');
 const app = express();
@@ -11,6 +10,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const request = require('request');
 const GooglePlaces = require('googleplaces');
+const emailBody = require(__dirname + '/emailBody.js');
 
 // Config variables
 const G_ID = process.env.G_ID || require('./config').G_ID;
@@ -408,29 +408,45 @@ app.post('/email/itinerary', (req, res) => {
   // console.log('ONLY ITI', req.body.Itinerary)
   const domain = 'sandbox8fcad1c0396a4afca4bedbd94469371f.mailgun.org';
   let mailgun = new Mailgun({apiKey: MAILGUN_API_KEY, domain: domain});
+  let param = {
+    from: 'cjkim0119@gmail.com',
+    to: 'cjkim0119@gmail.com',
+    subject: 'YOUR TRIP ITINERARY from Viator',
+    html: emailBody.emailBody(req.body.flight, req.body.itinerary)
+  };
 
-
-  fs.readFile(path.join(__dirname, '/emailBody'), 'utf-8', (err, data) => {
+  mailgun.messages().send(param, function(err, body) {
     if (err) {
-      throw err;
+      res.render('error', {error: err});
+      console.log('error sending an email', err);
     } else {
-      let param = {
-        from: 'cjkim0119@gmail.com',
-        to: 'cjkim0119@gmail.com',
-        subject: 'YOUR TRIP ITINERARY from Viator',
-        html: data
-      };
-      mailgun.messages().send(param, function(err, body) {
-        if (err) {
-          res.render('error', {error: err});
-          console.log('error sending an email', err);
-        } else {
-          res.send();
-          console.log('successfully sent email');
-        }
-      });
+      res.send();
+      console.log('successfully sent email');
     }
   });
+
+
+  // fs.readFile(path.join(__dirname, '/emailBody'), 'utf-8', (err, data) => {
+  //   if (err) {
+  //     throw err;
+  //   } else {
+  //     let param = {
+  //       from: 'cjkim0119@gmail.com',
+  //       to: 'cjkim0119@gmail.com',
+  //       subject: 'YOUR TRIP ITINERARY from Viator',
+  //       html: data
+  //     };
+  //     mailgun.messages().send(param, function(err, body) {
+  //       if (err) {
+  //         res.render('error', {error: err});
+  //         console.log('error sending an email', err);
+  //       } else {
+  //         res.send();
+  //         console.log('successfully sent email');
+  //       }
+  //     });
+  //   }
+  // });
 });
 
 app.get('/flightDuration', (req, res) => {
