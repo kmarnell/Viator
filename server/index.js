@@ -3,6 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const fs = require('fs');
 const Mailgun = require('mailgun-js');
 const db = require('../database/index');
 const app = express();
@@ -403,24 +404,31 @@ app.get('/database/getItinerary', (req, res) => {
 
 // SEND ITINERARY VIA EMAIL
 app.post('/email/itinerary', (req, res) => {
-  console.log('GOT THE REQUEST!', req.body)
+  // console.log('GOT THE REQUEST!', req.body)
+  // console.log('ONLY ITI', req.body.Itinerary)
   const domain = 'sandbox8fcad1c0396a4afca4bedbd94469371f.mailgun.org';
   let mailgun = new Mailgun({apiKey: MAILGUN_API_KEY, domain: domain});
 
-  let data = {
-    from: 'cjkim0119@gmail.com',
-    to: 'cjkim0119@gmail.com',
-    subject: 'TEST FROM CHARLES',
-    html: 'HELLO, I\'m currently using Mailgun and testing its functionality'
-  };
 
-  mailgun.messages().send(data, function(err, body) {
+  fs.readFile(path.join(__dirname, '/emailBody'), 'utf-8', (err, data) => {
     if (err) {
-      res.render('error', {error: err});
-      console.log('error sending an email', err);
+      throw err;
     } else {
-      res.send();
-      console.log('successfully sent email');
+      let param = {
+        from: 'cjkim0119@gmail.com',
+        to: 'cjkim0119@gmail.com',
+        subject: 'TEST FROM CHARLES',
+        html: data
+      };
+      mailgun.messages().send(param, function(err, body) {
+        if (err) {
+          res.render('error', {error: err});
+          console.log('error sending an email', err);
+        } else {
+          res.send();
+          console.log('successfully sent email');
+        }
+      });
     }
   });
 });

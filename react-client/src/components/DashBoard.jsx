@@ -387,7 +387,10 @@ class DashBoard extends React.Component {
       type: 'POST',
       url: '/email/itinerary',
       contentType: 'application/json',
-      data: JSON.stringify(context.state.itinerary),
+      data: JSON.stringify({
+        flight: context.state.flight,
+        itinerary: context.state.itinerary
+      }),
       success: (data) => {
         console.log('Successfully sent email post request to server');
       },
