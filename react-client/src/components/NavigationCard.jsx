@@ -21,37 +21,65 @@ import $ from 'jquery';
   constructor (props) {
     super(props);
      this.getGeoCoord = this.getGeoCoord.bind(this);
+     this.state = {
+      geoLocations: {
+        undefined: "Address of Undefined"
+      },
+      currentPosition: ""
+     }
+  }
+  
+  componentWillReceiveProps() {
+    let arrivalPortObj = {};
+    let destinationObj = {};
+    if (this.props.destination && this.props.arrivalPort) {
+      destinationObj[this.props.destination] = this.getGeoCoord(this.props.destination);
+      arrivalPortObj[this.props.arrivalPort] = this.getGeoCoord(this.props.arrivalPort);
+      this.setState({geoLocations: Object.assign(destinationObj, arrivalPortObj) })
+    }
+    
+    
   }
   
   getGeoCoord(position) {
-    if (position) {
+    var context = this;
+    if (!!context.state.geoLocations[position]) {
+      return context.state.geoLocations[position]
+    } else if (position !== undefined){
+      
       $.ajax({
         type: 'GET',
         url: '/geoCoord',
         contentType: 'application/json',
-        data: {position: position.replace(/[, ]+/g, " ").trim()},
+        data: {position: position.replace(/[ ]+/g, "+").trim()},
         dataType: 'text',
         success: (data) => {
-          console.log(`success getGeoCoord`,  data)
-          return data
+          context.setState({currentPosition: position});
+          let aObj = {};
+          aObj[position] = JSON.parse(data);
+          var currentGeoObj = context.state.geoLocations;
+          context.setState({geoLocations: Object.assign(currentGeoObj,aObj) })
         },
         fail: (data) => {
           console.log('dash.getGeoCoord FAIL ', err)
         }
       })
       .done(function(data) {
-        console.log('after ajax geoCoord: ' , typeof data, data, position)
+        let position = context.state.currentPosition;
         return data;
       })
-    } else { /* position === undefined */
-      console.log('position undefined') 
-  }
+    } 
 }
 
-  componentDidMount() {
+  geoLocation(position) {
+    var context = this;
+    if ( this.state.geoLocation[position]) {
+      return this.state.geoLocation[position]
+    }
+    else {
+      this.getGeoCoord(position)
+    }
   }
-
-
 
   render() {
     const styles = {
@@ -82,8 +110,9 @@ import $ from 'jquery';
         <Card
           style={styles.card}>
           <CardHeader
-              title= {this.getGeoCoord(this.props.arrivalPort)}
-              subtitle={this.getGeoCoord(this.props.destination)}
+              title= {'arrivalPort: ' + JSON.stringify(this.state.geoLocations[this.props.arrivalPort])}  
+              /*geoLocation "{"lat":40.6895314,"lng":-74.1744624}" */
+              subtitle={'destination: ' + JSON.stringify(this.state.geoLocations[this.props.destination])}
               avatar={<Avatar icon={<MapNavigation />}
                 style={styles.avatar}
                 color={white}/>}
