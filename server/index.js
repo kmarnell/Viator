@@ -3,12 +3,14 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const Mailgun = require('mailgun-js');
 const db = require('../database/index');
 const app = express();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const request = require('request');
 const GooglePlaces = require('googleplaces');
+const emailBody = require(__dirname + '/emailBody.js');
 
 // Config variables
 const G_ID = process.env.G_ID || require('./config').G_ID;
@@ -19,10 +21,13 @@ const GOOGLE_KEY = process.env.GOOGLE_KEY || require('./config').GOOGLE_KEY;
 const DARK_SKY_KEY = process.env.DARK_SKY_KEY || require('./config').DARK_SKY_KEY;
 const FLIGHT_API_KEY = process.env.FLIGHT_API_KEY || require('./config').FLIGHT_API_KEY;
 const FLIGHT_APP_KEY = process.env.FLIGHT_APP_KEY || require('./config').FLIGHT_APP_KEY;
+const MAILGUN_API_KEY = process.env.FLIGHT_APP_KEY || require('./config').MAILGUN_API_KEY;
 
 const place = new GooglePlaces(GOOGLE_KEY, 'json');
 
 app.use(express.static(__dirname + '/../react-client/dist'));
+
+app.set('view engine', 'jade');
 
 var userId;
 // check if user has saved data
@@ -405,6 +410,30 @@ app.get('/database/getItinerary', (req, res) => {
       console.log('Failed to read itinerary data', errr);
     } else {
       res.json(result);
+    }
+  });
+});
+
+// SEND ITINERARY VIA EMAIL
+app.post('/email/itinerary', (req, res) => {
+  // console.log('GOT THE REQUEST!', req.body)
+  // console.log('ONLY ITI', req.body.Itinerary)
+  const domain = 'sandbox8fcad1c0396a4afca4bedbd94469371f.mailgun.org';
+  let mailgun = new Mailgun({apiKey: MAILGUN_API_KEY, domain: domain});
+  let param = {
+    from: 'cjkim0119@gmail.com',
+    to: req.body.recipientEmail,
+    subject: 'YOUR TRIP ITINERARY from Viator',
+    html: emailBody.emailBody(req.body.flight, req.body.itinerary)
+  };
+
+  mailgun.messages().send(param, function(err, body) {
+    if (err) {
+      res.render('error', {error: err});
+      console.log('error sending an email', err);
+    } else {
+      res.send();
+      console.log('successfully sent email');
     }
   });
 });
