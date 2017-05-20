@@ -24,9 +24,8 @@ import Delete from 'material-ui/svg-icons/action/delete';
 import Dialog from 'material-ui/Dialog';
 import { SpeedDial, SpeedDialItem } from 'react-mui-speeddial';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
-import FlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff'
-
-
+import FlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff';
+import TextField from 'material-ui/TextField';
 
 import {
   BrowserRouter as Router,
@@ -35,7 +34,7 @@ import {
   Redirect
 } from 'react-router-dom';
 import {
-  amberA700, tealA700, white, redA700
+  amberA700, tealA700, white, redA700, cyan600
 } from 'material-ui/styles/colors';
 import $ from 'jquery';
 import SignOutToolBar from './SignOutToolBar.jsx';
@@ -72,10 +71,12 @@ class DashBoard extends React.Component {
       weather: [],
       itinerary: {},
       location: '',
+      recipientEmail: '',
       drawerOpen: false,
       returnFlightStatus: false,
       alertIsOpen: false,
-      newFlight: false
+      newFlight: false,
+      emailSelectionOpen: false
     };
     this.searchGoogle = this.searchGoogle.bind(this);
     this.flightSearch = this.flightSearch.bind(this);
@@ -91,6 +92,10 @@ class DashBoard extends React.Component {
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.newFlight = this.newFlight.bind(this);
+    this.openEmailSelection = this.openEmailSelection.bind(this);
+    this.closeEmailSelection = this.closeEmailSelection.bind(this);
+    this.sendEmail = this.sendEmail.bind(this);
+    this.setRecipient = this.setRecipient.bind(this);
   }
 
   searchEvents(location) {
@@ -382,6 +387,50 @@ class DashBoard extends React.Component {
     });
   }
 
+  openEmailSelection() {
+    this.setState({
+      emailSelectionOpen: true
+    });
+  }
+
+  closeEmailSelection() {
+    this.setState({
+      emailSelectionOpen: false
+    });
+  }
+
+  setRecipient(address) {
+    console.log(address)
+
+    this.setState({
+      recipientEmail: address
+    });
+  }
+
+  sendEmail() {
+    let context = this;
+    $.ajax({
+      type: 'POST',
+      url: '/email/itinerary',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        flight: context.state.flight,
+        itinerary: context.state.itinerary,
+        recipientEmail: context.state.recipientEmail
+      }),
+      success: (data) => {
+        console.log('Successfully sent email post request to server');
+      },
+      error: (error) => {
+        console.log('Failed to send email post request to server', error);
+      }
+    });
+
+    this.setState({
+      emailSelectionOpen: false
+    });
+  } 
+
   componentDidMount() {
     this.databaseFlightSearch();
   }
@@ -442,7 +491,7 @@ class DashBoard extends React.Component {
         zIndex: 100,
         position: 'fixed',
       },
-      exitToApp: {
+      itineraryIcon: {
         position: 'relative',
         bottom: 3
       },
@@ -502,10 +551,34 @@ class DashBoard extends React.Component {
               <AppBar
                 title="Trip Itinerary"
                 titleStyle={styles.appBarTitle}
-                iconElementLeft={<IconButton style={styles.exitToApp}><ExitToApp style={{fill: white}} /></IconButton>}
+                iconElementLeft={<IconButton><ExitToApp style={{fill: white}} /></IconButton>}
+                iconElementRight={<FlatButton label="Send via Email" onTouchTap={this.openEmailSelection} />}
                 onLeftIconButtonTouchTap={this.exitToApp}
+                iconStyleLeft={styles.itineraryIcon}
+                iconStyleRight={styles.itineraryIcon}
                 style={{height: 56}}
               />
+              <Dialog
+                open={this.state.emailSelectionOpen}
+                onRequestClose={this.closeEmailSelection}
+              >
+                <TextField
+                  hintText="recipient email address"
+                  floatingLabelText="recipient email address"
+                  fullWidth={true}
+                  onChange={(event, address) => this.setRecipient(address)}
+                />
+                <FlatButton
+                  label="Send"
+                  primary={true}
+                  onTouchTap={this.sendEmail}
+                />
+                <FlatButton 
+                  label="Close"
+                  secondary={true}
+                  onTouchTap={this.closeEmailSelection}
+                />
+              </Dialog>
               <Itinerary itinerary={this.state.itinerary} />
             </Drawer>
             <SpeedDial
