@@ -26,6 +26,7 @@ const AnyReactComponent = ({  img_src }) => <div><img src={mapPin}/></div>;
 class NavigationCard extends React.Component {
   constructor (props) {
     super(props);
+<<<<<<< HEAD
 
     this.state = {
       price: '',
@@ -66,6 +67,67 @@ class NavigationCard extends React.Component {
      this.setState({
       markers: [{lat: 37.7749, lng: -122.42}, {lat: 37.8044, lng: -122.2711}],
     });
+=======
+     this.getGeoCoord = this.getGeoCoord.bind(this);
+     this.state = {
+      geoLocations: {
+        undefined: "Address of Undefined"
+      },
+      currentPosition: ""
+     }
+  }
+  
+  componentWillReceiveProps() {
+    let arrivalPortObj = {};
+    let destinationObj = {};
+    if (this.props.destination && this.props.arrivalPort) {
+      destinationObj[this.props.destination] = this.getGeoCoord(this.props.destination);
+      arrivalPortObj[this.props.arrivalPort] = this.getGeoCoord(this.props.arrivalPort);
+      this.setState({geoLocations: Object.assign(destinationObj, arrivalPortObj) })
+    }
+    
+    
+  }
+  
+  getGeoCoord(position) {
+    var context = this;
+    if (!!context.state.geoLocations[position]) {
+      return context.state.geoLocations[position]
+    } else if (position !== undefined){
+      
+      $.ajax({
+        type: 'GET',
+        url: '/geoCoord',
+        contentType: 'application/json',
+        data: {position: position.replace(/[ ]+/g, "+").trim()},
+        dataType: 'text',
+        success: (data) => {
+          context.setState({currentPosition: position});
+          let aObj = {};
+          aObj[position] = JSON.parse(data);
+          var currentGeoObj = context.state.geoLocations;
+          context.setState({geoLocations: Object.assign(currentGeoObj,aObj) })
+        },
+        fail: (data) => {
+          console.log('dash.getGeoCoord FAIL ', err)
+        }
+      })
+      .done(function(data) {
+        let position = context.state.currentPosition;
+        return data;
+      })
+    } 
+}
+
+  geoLocation(position) {
+    var context = this;
+    if ( this.state.geoLocation[position]) {
+      return this.state.geoLocation[position]
+    }
+    else {
+      this.getGeoCoord(position)
+    }
+>>>>>>> 8e793ad3704f1092b104ecb6484849ee9c165704
   }
 
   render() {
@@ -107,8 +169,14 @@ const styles = {
         <Card
           style={styles.card}>
           <CardHeader
+<<<<<<< HEAD
               title="Navigation from Airport"
               subtitle='Address should go here.'
+=======
+              title= {'arrivalPort: ' + JSON.stringify(this.state.geoLocations[this.props.arrivalPort])}  
+              /*geoLocation "{"lat":40.6895314,"lng":-74.1744624}" */
+              subtitle={'destination: ' + JSON.stringify(this.state.geoLocations[this.props.destination])}
+>>>>>>> 8e793ad3704f1092b104ecb6484849ee9c165704
               avatar={<Avatar icon={<MapNavigation />}
                 style={styles.avatar}
                 color={white}/>}

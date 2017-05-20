@@ -42,7 +42,6 @@ import {
   }
 
   render() {
-    console.log(this.props.flight.airline)
     const airlineCheckInUrls = {
       "Alaska Airlines": 'https://webselfservice.alaskaair.com/checkinweb/default.aspx',
       "American Airlines": 'https://www.aa.com/reservation/flightCheckInViewReservationsAccess.do',
@@ -53,6 +52,18 @@ import {
       "Spirit Airlines": 'https://www.spirit.com/Default.aspx',
       "United Airlines": 'https://www.united.com/travel/checkin/start.aspx',
       "Virgin America": 'https://www.virginamerica.com/flight-check-in'
+    }
+    
+    const flightStatus = {
+      A: 'Active', 
+      C: 'Canceled',
+      D: 'Diverted',
+      DN:  'Data source needed',
+      L: 'Landed',
+      NO:  'Not Operational',
+      R: 'Redirected',
+      S: 'On-Time',
+      U: 'Unknown'
     }
 
     const styles = {
@@ -108,7 +119,7 @@ import {
             <Card style={styles.singleCard}>
               <CardHeader
                 title="Flight Information"
-                subtitle='Status: On-Time'
+                subtitle={'Status: On-Time >' + this.flightStatus }
                 avatar={<Avatar icon={<ActionFlightTakeoff />}
                   style={styles.avatar}
                   color={white}/>}
@@ -178,7 +189,7 @@ import {
               <Card style={styles.card}>
                 <CardHeader
                   title="Flight Information"
-                  subtitle='Status: On-Time'
+                  subtitle={'Status: '+ flightStatus[this.props.flight.status] }
                   avatar={<Avatar icon={<ActionFlightTakeoff />}
                     style={styles.avatar}
                     color={white}/>}
