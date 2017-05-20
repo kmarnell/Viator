@@ -215,14 +215,13 @@ class DashBoard extends React.Component {
         airline: data.appendix.airlines[0].name,
         leaveDate: dateOnly,
         flightNumber: flight,
+        status: data.flightStatuses[0].status
       };
       if (flightType === 'flight') {
-        console.log('FLIGHT OBJ', obj);
         this.setState({
           flight: obj
         });
       } else if (flightType === 'returnFlight') {
-        console.log('RETURN FLIGHT', obj);
         this.setState({
           returnFlight: obj
         });
