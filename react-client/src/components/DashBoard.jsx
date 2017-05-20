@@ -216,7 +216,7 @@ class DashBoard extends React.Component {
         leaveDate: dateOnly,
         flightNumber: flight,
         status: data.flightStatuses[0].status
-      };
+      }; //status: for flightCard
       if (flightType === 'flight') {
         this.setState({
           flight: obj
