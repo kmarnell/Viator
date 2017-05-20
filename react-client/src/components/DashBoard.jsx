@@ -425,6 +425,10 @@ class DashBoard extends React.Component {
         console.log('Failed to send email post request to server', error);
       }
     });
+
+    this.setState({
+      emailSelectionOpen: false
+    });
   } 
 
   componentDidMount() {
@@ -570,7 +574,9 @@ class DashBoard extends React.Component {
                   onTouchTap={this.sendEmail}
                 />
                 <FlatButton 
-
+                  label="Close"
+                  secondary={true}
+                  onTouchTap={this.closeEmailSelection}
                 />
               </Dialog>
               <Itinerary itinerary={this.state.itinerary} />
