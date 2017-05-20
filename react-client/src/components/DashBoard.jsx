@@ -22,12 +22,17 @@ import Event from 'material-ui/svg-icons/action/event';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import Delete from 'material-ui/svg-icons/action/delete';
 import Dialog from 'material-ui/Dialog';
+import { SpeedDial, SpeedDialItem } from 'react-mui-speeddial';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import FlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff'
+
 
 
 import {
   BrowserRouter as Router,
   Route,
   Link,
+  Redirect
 } from 'react-router-dom';
 import {
   amberA700, tealA700, white, redA700
@@ -69,7 +74,8 @@ class DashBoard extends React.Component {
       location: '',
       drawerOpen: false,
       returnFlightStatus: false,
-      alertIsOpen: false
+      alertIsOpen: false,
+      newFlight: false
     };
     this.searchGoogle = this.searchGoogle.bind(this);
     this.flightSearch = this.flightSearch.bind(this);
@@ -84,6 +90,7 @@ class DashBoard extends React.Component {
     this.deleteCurrent = this.deleteCurrent.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.newFlight = this.newFlight.bind(this);
   }
 
   searchEvents(location) {
@@ -103,6 +110,10 @@ class DashBoard extends React.Component {
 
  handleClose() {
    this.setState({alertIsOpen: false});
+ }
+
+ newFlight() {
+   this.setState({newFlight: true})
  }
 
   searchGoogle(location) {
@@ -444,6 +455,9 @@ class DashBoard extends React.Component {
     };
 
 
+    if (this.state.newFlight) {
+      return <Redirect to="/trip" />
+    }
     return (
       <MuiThemeProvider>
       <div>
@@ -494,29 +508,32 @@ class DashBoard extends React.Component {
               />
               <Itinerary itinerary={this.state.itinerary} />
             </Drawer>
-          <FloatingActionButton
-            style={styles.fab3}
-            backgroundColor = {redA700}
-            label="Delete"
-            onClick = {this.handleOpen}
+            <SpeedDial
+            fabContentOpen={
+              <ContentAdd />
+            }
+            fabContentClose={
+              <NavigationClose />
+            }
+            style = {styles.fab}
             >
-            <Delete />
-          </FloatingActionButton>
-            <Link to='/trip'>
-              <FloatingActionButton
-                style={styles.fab}
-                backgroundColor = {amberA700}
-                label="Search"><ContentAdd />
-              </FloatingActionButton>
-            </Link>
-            <FloatingActionButton
-              style={styles.fab2}
-              backgroundColor={tealA700}
-              label="openItinerary"
-              onClick={this.toggleItinerary}
-            >
-              <Event />
-            </FloatingActionButton>
+
+            <SpeedDialItem
+             fabContent={<Delete/>}
+             onTouchTap={this.handleOpen}
+           />
+
+           <SpeedDialItem
+             fabContent={<Event/>}
+             onTouchTap={this.toggleItinerary}
+           />
+           <SpeedDialItem
+            fabContent={<FlightTakeoff/>}
+            onTouchTap={this.newFlight}
+          />
+
+
+          </SpeedDial>
         </div>
       </div>
 
