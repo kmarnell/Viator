@@ -5,6 +5,7 @@ import {
   StepLabel,
 } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
 import FlatButton from 'material-ui/FlatButton';
 import {Link} from 'react-router-dom';
 import {Redirect} from 'react-router';
@@ -18,9 +19,10 @@ import SignOutToolBar from './SignOutToolBar.jsx';
 import $ from 'jquery';
 import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
+import Home from 'material-ui/svg-icons/action/home';
 import ActionFlightTakeoff from 'material-ui/svg-icons/action/flight-takeoff';
 import {
-  pink300, pink500, white
+  pink300, pink500, blueA700, white
 } from 'material-ui/styles/colors';
 
 
@@ -34,7 +36,8 @@ class NewTrip extends React.Component {
       airline: 'AS',
       flightNumber: '',
       finalDestination: '',
-      date:''
+      date:'',
+      homePage: false
     }
     this.handleNext = this.handleNext.bind(this);
     this.handlePrev = this.handlePrev.bind(this);
@@ -45,6 +48,7 @@ class NewTrip extends React.Component {
     this.handleFinalDestination = this.handleFinalDestination.bind(this);
     this.handleReturnFlightNumber = this.handleReturnFlightNumber.bind(this);
     this.handleReturnFlightDate = this.handleReturnFlightDate.bind(this);
+    this.redirectToHomePage = this.redirectToHomePage.bind(this);
   }
 
   isFlightInfoDefault () {
@@ -109,6 +113,10 @@ class NewTrip extends React.Component {
   }
   handleReturnFlightDate (event, date) {
     this.setState({returnDate: date});
+  }
+
+  redirectToHomePage() {
+    this.setState({homePage:true})
   }
 
 
@@ -313,7 +321,20 @@ saveData() {
       contentStyle: {
         margin: '0 16px',
       },
+      fab: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 20,
+        left: 'auto',
+        zIndex: 100,
+        position: 'fixed',
+      },
     }
+
+     if (this.state.homePage) {
+         return <Redirect to="/dashboard" />
+      }
     return (
       <div>
         <SignOutToolBar/>
@@ -362,6 +383,16 @@ saveData() {
             )}
           </div>
         </div>
+        <MuiThemeProvider>
+        <FloatingActionButton
+          style={styles.fab}
+          backgroundColor = {blueA700}
+          label="Home"
+          onTouchTap={this.redirectToHomePage}
+          >
+          <Home />
+          </FloatingActionButton>
+        </MuiThemeProvider>
       </div>
     );
   }
