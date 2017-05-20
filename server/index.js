@@ -417,7 +417,7 @@ app.post('/email/itinerary', (req, res) => {
       let param = {
         from: 'cjkim0119@gmail.com',
         to: 'cjkim0119@gmail.com',
-        subject: 'TEST FROM CHARLES',
+        subject: 'YOUR TRIP ITINERARY from Viator',
         html: data
       };
       mailgun.messages().send(param, function(err, body) {
