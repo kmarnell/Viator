@@ -10,10 +10,12 @@ import Avatar from 'material-ui/Avatar';
 import Arrow from 'material-ui/svg-icons/navigation/arrow-forward';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton'
 
 import {
   grey500, white, teal500,
 } from 'material-ui/styles/colors';
+
 
 
  class FlightCard extends React.Component {
@@ -35,9 +37,29 @@ import {
     this.setState({returnFlight: false})
   }
 
+  linkToCheckIn() {
+
+  }
 
   render() {
+    console.log(this.props.flight.airline)
+    const airlineCheckInUrls = {
+      "Alaska Airlines": 'https://webselfservice.alaskaair.com/checkinweb/default.aspx',
+      "American Airlines": 'https://www.aa.com/reservation/flightCheckInViewReservationsAccess.do',
+      "Delta Air Lines": 'https://www.delta.com/PCCOciWeb/findBy.action',
+      "Frontier Airlines": 'https://www.flyfrontier.com/manage-travel/online-check-in/',
+      "JetBlue Airways": 'https://book.jetblue.com/B6.myb/checkIn.html#/',
+      "Southwest Airlines": 'https://www.southwest.com/flight/retrieveCheckinDoc.html',
+      "Spirit Airlines": 'https://www.spirit.com/Default.aspx',
+      "United Airlines": 'https://www.united.com/travel/checkin/start.aspx',
+      "Virgin America": 'https://www.virginamerica.com/flight-check-in'
+    }
+
     const styles = {
+      checkInButton: {
+        display: 'inline',
+        float: 'right'
+      },
       gridList: {
         width: '100%',
         height: '40%',
@@ -91,6 +113,9 @@ import {
                   style={styles.avatar}
                   color={white}/>}
                 style={styles.cardHeader}/>
+              <a href = {airlineCheckInUrls[this.props.flight.airline]}>
+              <FlatButton label="Check-In" primary={true} style={styles.checkInButton} />
+              </a>
               <Divider/>
               <CardTitle
                 title={this.props.flight.airline + ' ' + this.props.flight.flightNumber}
@@ -158,6 +183,9 @@ import {
                     style={styles.avatar}
                     color={white}/>}
                   style={styles.cardHeader}/>
+                <a href = {airlineCheckInUrls[this.props.flight.airline]}>
+                <FlatButton label="Check-In" primary={true} style={styles.checkInButton} />
+                </a>
                 <Divider/>
                 <CardTitle
                   title={this.props.flight.airline + ' ' + this.props.flight.flightNumber}
@@ -223,6 +251,9 @@ import {
                   style={styles.avatar}
                   color={white}/>}
                   style={styles.cardHeader}/>
+                  <a href = {airlineCheckInUrls[this.props.flight.airline]}>
+                  <FlatButton label="Check-In" primary={true} style={styles.checkInButton} />
+                  </a>
                 <Divider/>
                 <CardTitle
                   title={this.props.returnFlight.airline + ' ' + this.props.returnFlight.flightNumber}
