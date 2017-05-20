@@ -410,7 +410,7 @@ app.post('/email/itinerary', (req, res) => {
   let mailgun = new Mailgun({apiKey: MAILGUN_API_KEY, domain: domain});
   let param = {
     from: 'cjkim0119@gmail.com',
-    to: 'cjkim0119@gmail.com',
+    to: req.body.recipientEmail,
     subject: 'YOUR TRIP ITINERARY from Viator',
     html: emailBody.emailBody(req.body.flight, req.body.itinerary)
   };
@@ -424,29 +424,6 @@ app.post('/email/itinerary', (req, res) => {
       console.log('successfully sent email');
     }
   });
-
-
-  // fs.readFile(path.join(__dirname, '/emailBody'), 'utf-8', (err, data) => {
-  //   if (err) {
-  //     throw err;
-  //   } else {
-  //     let param = {
-  //       from: 'cjkim0119@gmail.com',
-  //       to: 'cjkim0119@gmail.com',
-  //       subject: 'YOUR TRIP ITINERARY from Viator',
-  //       html: data
-  //     };
-  //     mailgun.messages().send(param, function(err, body) {
-  //       if (err) {
-  //         res.render('error', {error: err});
-  //         console.log('error sending an email', err);
-  //       } else {
-  //         res.send();
-  //         console.log('successfully sent email');
-  //       }
-  //     });
-  //   }
-  // });
 });
 
 app.get('/flightDuration', (req, res) => {
