@@ -29,69 +29,61 @@ class NavigationCard extends React.Component {
 
     this.state = {
       price: '',
-      markers: [],
+      markers: [{lat: 37.8044, lng: -122.2711},{lat: 37.7749, lng: -122.42}],
       geoLocations: {},
-      currentPosition: ""
+      currentPosition: "",
+      airport: false
      }
 
     this.getPriceEstimates = this.getPriceEstimates.bind(this);
     this.getGeoCoord = this.getGeoCoord.bind(this);
     
   }
-    getPriceEstimates() {
-    var data = JSON.stringify({
-       start_latitude: 37.7749,
-       start_longitude: 122.4194,
-       end_latitude: 37.8044,
-       end_longitude: 122.2711    
-     });
 
-    $.ajax({
-      type: 'POST',
-      url: '/estimates/price', 
-      headers: {
-        Authorization: config.UBER_SERVER_TOKEN
-      },
-      contentType: 'application/json',
-      data: data, 
-      success: (data) => {
-        this.setState({price: data});
-      },
-      error: function() {
-        console.log("error!")
-      }
-    })
-  }
+    getPriceEstimates(airport, destination) {
+      var data = JSON.stringify({
+         start_latitude: airport.lat,
+         start_longitude: airport.lng,
+         end_latitude: destination.lat,
+         end_longitude: destination.lng   
+       });
+      $.ajax({
+        type: 'POST',
+        url: '/estimates/price', 
+        headers: {
+          Authorization: config.UBER_SERVER_TOKEN
+        },
+        contentType: 'application/json',
+        data: data, 
+        success: (data) => {
+          this.setState({price: data});
+        },
+        error: function() {
+          console.log("error!")
+        }
+      })
+    }
 
   componentDidMount() {
-    this.getPriceEstimates();
+    
   }
   
   componentWillReceiveProps() {
-    let arrivalPortObj = {};
-    let destinationObj = {};
     if (this.props.destination && this.props.arrivalPort) {
-      destinationObj[this.props.destination] = this.getGeoCoord(this.props.destination);
-      arrivalPortObj[this.props.arrivalPort] = this.getGeoCoord(this.props.arrivalPort);
-      this.setState({geoLocations: Object.assign(destinationObj, arrivalPortObj)}, function() {
-        this.setState({markers: [this.state.geoLocations[this.props.arrivalPort], this.state.geoLocations[this.props.destination]]})
-      })
-      // console.log("STATE", this.state)
-      // if(this.state.geoLocations[this.props.arrivalPort] && this.state.geoLocations[this.props.destination]) {
-        
-      // } else {
-      //   this.setState({markers: [{lat: 37.7749, lng: -122.42}, {lat: 37.8044, lng: -122.2711}]}); 
-      // }
+
+      this.getGeoCoord(this.props.destination, 'destination');
+      this.getGeoCoord(this.props.arrivalPort, 'airport');
+
     } 
+     
   }
   
 
-  getGeoCoord(position) {
+  getGeoCoord(position, dest) {
     var context = this;
     if (!!context.state.geoLocations[position]) {
       return context.state.geoLocations[position]
     } else if (position !== undefined){
-      
       $.ajax({
         type: 'GET',
         url: '/geoCoord',
@@ -111,6 +103,22 @@ class NavigationCard extends React.Component {
       })
       .done(function(data) {
         let position = context.state.currentPosition;
+        let arrivalObj = {};
+        let currentGeoState = context.state.geoLocations;
+        arrivalObj[position] = data;
+        context.setState({geoLocations: Object.assign(currentGeoState, arrivalObj)}, function() {
+          let setMarkers = context.state.markers 
+          if ( dest === 'airport') {
+            setMarkers[0] = JSON.parse(data)
+            context.setState({ markers: setMarkers })   ////[ geoinfo_airport, geoinfo_destination 
+          } else if( dest === 'destination') {
+            setMarkers[1] = JSON.parse(data)
+            context.setState({ markers: setMarkers })
+          }
+        })
+        
+        context.getPriceEstimates(context.state.markers[0] || {lat:0,lng:0}, context.state.markers[1] || {lat:0,lng:0});
+
         return data;
       })
     } 
@@ -157,7 +165,7 @@ class NavigationCard extends React.Component {
         height: '44',
         margin: 'auto'
       }
-
+      console.log('price', this.state.price)
 
     return (
       <div>
@@ -165,12 +173,8 @@ class NavigationCard extends React.Component {
           style={styles.card}>
           <CardHeader
 
-              //title={`Navigation from ${this.props.arrivalPort}`}
-              //subtitle={this.props.destination}
-              title= {'arrivalPort: ' + JSON.stringify(this.state.geoLocations[this.props.arrivalPort])}  
-              /*geoLocation "{"lat":40.6895314,"lng":-74.1744624}" */
-              subtitle={'destination: ' + (this.state.geoLocations[this.props.destination])}
-
+              title={`Navigation from ${this.props.arrivalPort}`}
+              subtitle={this.props.destination}
               avatar={<Avatar icon={<MapNavigation />}
                 style={styles.avatar}
                 color={white}/>}
@@ -180,11 +184,11 @@ class NavigationCard extends React.Component {
                 style={styles.map}>
                 <GoogleMapReact
                   bootstrapURLKeys={{key: config.STATIC_MAP}}
-                  center={{lat: 37.8044, lng: -122.2711},{lat: 37.7749, lng: -122.42}}
-                  zoom={11}
+                  center={this.state.markers[0],this.state.markers[1]}
+                  zoom={10}
                 >
 
-                  {this.state.markers && this.state.markers.map((marker, i) =>{
+                  {this.state.markers.length === 2 && this.state.markers.map((marker, i) =>{
                   return(
     
                       <AnyReactComponent
