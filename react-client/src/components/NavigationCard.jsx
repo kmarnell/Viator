@@ -17,7 +17,7 @@ import GoogleMapReact from 'google-map-react';
 import FlatButton from 'material-ui/FlatButton';
 import $ from 'jquery';
 import config from '../../../server/config.js';
-const uberBar = './uberImage.png';
+const uberLogo = './uberLogo.png';
 const mapPin = './mapPin.png';
 const uberLogo = './uberlogo.png';
 
@@ -149,7 +149,7 @@ class NavigationCard extends React.Component {
             height: '20%',
           },
           map: {
-            height: '65%',
+            height: '60%',
           },
           actions: {
             height: '20%',
@@ -205,6 +205,13 @@ class NavigationCard extends React.Component {
               <div style={uberImageStyle}>
                 <p style={priceStyle}>Price Estimate: {this.state.price}</p>
               </div>
+              <CardHeader
+                title={'Price Estimate: '} 
+                subtitle={this.state.price}
+                avatar={uberLogo} 
+
+              />
+
         </Card>
       </div>
     )
