@@ -124,10 +124,11 @@ app.get('/geoCoord', (req, res) => {
 
 //uber api call for price estimate
 app.post('/estimates/price', (req, res) => {
-  request.get(`https://api.uber.com/v1.2/estimates/price?server_token=${req.headers.authorization}&start_latitude=${req.body.start_latitude}&start_longitude=-${req.body.start_longitude}&end_latitude=${req.body.end_latitude}&end_longitude=-${req.body.end_longitude}`,
+  request.get(`https://api.uber.com/v1.2/estimates/price?server_token=${req.headers.authorization}&start_latitude=${req.body.start_latitude}&start_longitude=${req.body.start_longitude}&end_latitude=${req.body.end_latitude}&end_longitude=${req.body.end_longitude}`,
     (error, response, body) => {
        if (error) console.error(error);
        var parsed = JSON.parse(body);
+       console.log(parsed)
        res.send(parsed.prices[0].estimate);
    });
 });
