@@ -19,6 +19,7 @@ import $ from 'jquery';
 import config from '../../../server/config.js';
 const uberBar = './uberImage.png';
 const mapPin = './mapPin.png';
+const uberLogo = './uberlogo.png';
 
 
 const AnyReactComponent = ({  img_src }) => <div><img src={mapPin}/></div>;
