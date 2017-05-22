@@ -19,7 +19,7 @@ import $ from 'jquery';
 import config from '../../../server/config.js';
 const uberLogo = './uberLogo.png';
 const mapPin = './mapPin.png';
-const uberLogo = './uberlogo.png';
+
 
 
 const AnyReactComponent = ({  img_src }) => <div><img src={mapPin}/></div>;
@@ -156,11 +156,6 @@ class NavigationCard extends React.Component {
           }
         }
 
-      const uberImageStyle = {
-        backgroundImage: `url(${uberBar})`,
-        width: '100%'
-      }
-
       const priceStyle = {
         textAlign: 'right',
         width: '300',
@@ -201,9 +196,6 @@ class NavigationCard extends React.Component {
                     )
                   })}
                 </GoogleMapReact>
-              </div>
-              <div style={uberImageStyle}>
-                <p style={priceStyle}>Price Estimate: {this.state.price}</p>
               </div>
               <CardHeader
                 title={'Price Estimate: '} 
